@@ -32,16 +32,101 @@ st.set_page_config(
     layout="centered"
 )
 
+# カスタムCSS
+st.markdown("""
+<style>
+    /* メインコンテンツの余白調整 */
+    .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        max-width: 1200px;
+    }
+    
+    /* タイトルのスタイル */
+    h1 {
+        color: #1f77b4;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* セクションヘッダーのスタイル */
+    h2 {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e0e0e0;
+    }
+    
+    /* セレクトボックスのスタイル */
+    .stSelectbox label {
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 0.95rem;
+    }
+    
+    /* ボタンのホバーエフェクト */
+    .stButton button {
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .stButton button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    /* 情報ボックスのスタイル */
+    .stInfo, .stSuccess, .stWarning, .stError {
+        border-radius: 8px;
+        padding: 1rem;
+    }
+    
+    /* ダウンロードボタンのスタイル */
+    .stDownloadButton button {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        padding: 0.75rem 2rem;
+        border-radius: 10px;
+    }
+    
+    .stDownloadButton button:hover {
+        transform: scale(1.02);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* キャプションのスタイル */
+    .caption {
+        color: #7f8c8d;
+        font-size: 0.85rem;
+    }
+    
+    /* 区切り線のスタイル */
+    hr {
+        margin: 2rem 0;
+        border: none;
+        border-top: 1px solid #e0e0e0;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # セッションステートの初期化
 if 'transfers' not in st.session_state:
     st.session_state.transfers = []
 
 # タイトル
 st.title("📅 リハビリ訪問予定表作成アプリ")
+st.markdown("<p style='color: #7f8c8d; font-size: 1.1rem; margin-top: -10px;'>月次の訪問スケジュールを簡単にPDF化</p>", unsafe_allow_html=True)
 st.markdown("---")
 
 # カレンダー設定セクション
 st.header("📆 カレンダー設定")
+st.markdown("<br>", unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
@@ -60,10 +145,12 @@ with col2:
     )
 
 st.markdown("---")
+st.markdown("<br>", unsafe_allow_html=True)
 
 # 振替設定セクション
-st.header("🔄 振替設定（オプション）")
-st.caption("振替がない場合はそのまま「PDFを作成」ボタンを押してください")
+st.header("🔄 振替設定")
+st.caption("📌 振替がない場合はそのまま「PDFを作成」ボタンを押してください")
+st.markdown("<br>", unsafe_allow_html=True)
 
 # その月の月曜日と水曜日を取得
 def get_mondays_and_wednesdays(year, month):
@@ -176,7 +263,21 @@ with col3:
     end_min = end_total_min % 60
     
     # 終了時刻の表示
-    st.success(f"⏰ **{start_hour}:{start_min:02d} ～ {end_hour}:{end_min:02d}** ({duration}分間)")
+    st.markdown(f"""
+    <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                padding: 1rem; 
+                border-radius: 10px; 
+                text-align: center;
+                margin-top: 1rem;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);'>
+        <p style='color: white; font-size: 1.2rem; font-weight: 700; margin: 0;'>
+            ⏰ {start_hour}:{start_min:02d} ～ {end_hour}:{end_min:02d}
+        </p>
+        <p style='color: rgba(255,255,255,0.9); font-size: 0.9rem; margin: 0.3rem 0 0 0;'>
+            訪問時間: {duration}分間
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
 # 時間文字列を生成
 transfer_time = f"{start_hour}:{start_min:02d}-{end_hour}:{end_min:02d}"
@@ -187,6 +288,8 @@ if end_hour > 17 or (end_hour == 17 and end_min > 30):
     time_valid = False
 else:
     time_valid = True
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 col_btn1, col_btn2 = st.columns(2)
 
@@ -213,17 +316,32 @@ with col_btn2:
         st.rerun()
 
 # 登録された振替の表示
+st.markdown("<br>", unsafe_allow_html=True)
+
 if st.session_state.transfers:
-    st.info("**登録された振替:**")
+    st.markdown("**📋 登録された振替一覧**")
     for i, (from_day, to_day, time) in enumerate(st.session_state.transfers, 1):
         from_weekday = ['月','火','水','木','金','土','日'][calendar.weekday(year, month, from_day)]
         to_weekday = ['月','火','水','木','金','土','日'][calendar.weekday(year, month, to_day)]
         
-        col_del, col_info = st.columns([1, 9])
+        col_info, col_del = st.columns([9, 1])
         with col_info:
-            st.write(f"{i}. {from_day}日({from_weekday}) → {to_day}日({to_weekday}) {time}")
+            st.markdown(f"""
+            <div style='background: #f8f9fa; 
+                        padding: 0.8rem 1rem; 
+                        border-radius: 8px; 
+                        border-left: 4px solid #667eea;
+                        margin-bottom: 0.5rem;'>
+                <span style='font-size: 1rem; font-weight: 600; color: #2c3e50;'>
+                    {i}. {from_day}日({from_weekday}) → {to_day}日({to_weekday})
+                </span>
+                <span style='color: #7f8c8d; margin-left: 1rem;'>
+                    {time}
+                </span>
+            </div>
+            """, unsafe_allow_html=True)
         with col_del:
-            if st.button("❌", key=f"del_{i}"):
+            if st.button("🗑️", key=f"del_{i}", help="削除"):
                 st.session_state.transfers.pop(i-1)
                 st.rerun()
 else:
@@ -363,6 +481,15 @@ def create_pdf(year, month, transfers_list):
     return pdf_buffer, monday_visits, wednesday_visits, canceled_dates
 
 # PDF作成ボタン
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("""
+<style>
+    div[data-testid="stButton"] button[kind="primary"] {
+        height: 60px;
+        font-size: 1.2rem;
+    }
+</style>
+""", unsafe_allow_html=True)
 if st.button("📥 PDFを作成", use_container_width=True, type="primary"):
     with st.spinner("PDFを作成中..."):
         pdf_buffer, monday_visits, wednesday_visits, canceled_dates = create_pdf(
@@ -419,4 +546,15 @@ with st.expander("💡 使い方"):
     - 振替先には曜日も表示されるので分かりやすい！
     """)
 
-st.caption("作成者: Claude | 月曜日（11:20-12:00）と水曜日（11:00-11:40）は自動的に訪問日になります | 振替は開始時刻+訪問時間で設定")
+st.markdown("---")
+
+st.markdown("""
+<div style='text-align: center; color: #7f8c8d; padding: 1rem 0;'>
+    <p style='margin: 0; font-size: 0.9rem;'>
+        💡 月曜日（11:20-12:00）と水曜日（11:00-11:40）は自動的に訪問日になります
+    </p>
+    <p style='margin: 0.5rem 0 0 0; font-size: 0.85rem;'>
+        振替は開始時刻+訪問時間で設定 | 作成者: Claude
+    </p>
+</div>
+""", unsafe_allow_html=True)
