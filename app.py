@@ -103,7 +103,7 @@ def get_weekdays_in_same_week(year, month, day):
 # 振替元の選択肢を取得
 transfer_options = get_mondays_and_wednesdays(year, month)
 
-col1, col2, col3 = st.columns([2, 2, 3])
+col1, col2, col3 = st.columns([1.5, 1.5, 4])
 
 with col1:
     if transfer_options:
@@ -140,7 +140,7 @@ with col3:
     st.write("**時間設定**")
     st.caption("定時: 9:00-17:30")
     
-    time_row1 = st.columns([3, 3, 4])
+    time_row1 = st.columns([1, 1, 1])
     
     with time_row1[0]:
         start_hour = st.selectbox(
