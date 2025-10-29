@@ -218,6 +218,147 @@ with col2:
 
 st.markdown("---")
 
+# 定期訪問設定セクション
+st.header("📅 定期訪問設定")
+st.markdown("""
+<div style='background: linear-gradient(145deg, #e8f5e9 0%, #ffffff 100%);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            margin: 2rem 0;
+            border: 1px solid rgba(76, 175, 80, 0.2);'>
+    <p style='color: #2e7d32; font-size: 0.95rem; font-weight: 600; margin: 0; text-align: center;'>
+        💡 毎週の定期訪問日と時間を設定してください
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+# 訪問日1
+st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 定期訪問日 1</p>", unsafe_allow_html=True)
+
+col_v1_day, col_v1_time = st.columns([1, 2])
+
+with col_v1_day:
+    visit1_weekday = st.selectbox(
+        "曜日",
+        options=['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'],
+        index=0,  # デフォルト: 月曜日
+        key="visit1_weekday"
+    )
+
+with col_v1_time:
+    v1_col1, v1_col2, v1_col3 = st.columns(3)
+    
+    with v1_col1:
+        visit1_start_hour = st.selectbox(
+            "開始時",
+            options=list(range(9, 18)),
+            index=2,  # デフォルト: 11時
+            format_func=lambda x: f"{x}時",
+            key="visit1_start_hour"
+        )
+    
+    with v1_col2:
+        visit1_start_min = st.selectbox(
+            "開始分",
+            options=list(range(0, 60, 5)),
+            index=4,  # デフォルト: 20分
+            format_func=lambda x: f"{x:02d}分",
+            key="visit1_start_min"
+        )
+    
+    with v1_col3:
+        visit1_duration = st.selectbox(
+            "訪問時間",
+            options=[40, 60],
+            index=0,  # デフォルト: 40分
+            format_func=lambda x: f"{x}分",
+            key="visit1_duration"
+        )
+
+# 訪問日1の終了時刻計算
+v1_end_total = visit1_start_hour * 60 + visit1_start_min + visit1_duration
+v1_end_hour = v1_end_total // 60
+v1_end_min = v1_end_total % 60
+visit1_time = f"{visit1_start_hour}:{visit1_start_min:02d}-{v1_end_hour}:{v1_end_min:02d}"
+
+st.markdown(f"""
+<div style='background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%); 
+            padding: 0.8rem 1.5rem; 
+            border-radius: 12px; 
+            text-align: center;
+            margin: 1rem 0;'>
+    <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
+        📌 {visit1_weekday} {visit1_time}
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# 訪問日2
+st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 定期訪問日 2</p>", unsafe_allow_html=True)
+
+col_v2_day, col_v2_time = st.columns([1, 2])
+
+with col_v2_day:
+    visit2_weekday = st.selectbox(
+        "曜日",
+        options=['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'],
+        index=2,  # デフォルト: 水曜日
+        key="visit2_weekday"
+    )
+
+with col_v2_time:
+    v2_col1, v2_col2, v2_col3 = st.columns(3)
+    
+    with v2_col1:
+        visit2_start_hour = st.selectbox(
+            "開始時",
+            options=list(range(9, 18)),
+            index=2,  # デフォルト: 11時
+            format_func=lambda x: f"{x}時",
+            key="visit2_start_hour"
+        )
+    
+    with v2_col2:
+        visit2_start_min = st.selectbox(
+            "開始分",
+            options=list(range(0, 60, 5)),
+            index=0,  # デフォルト: 00分
+            format_func=lambda x: f"{x:02d}分",
+            key="visit2_start_min"
+        )
+    
+    with v2_col3:
+        visit2_duration = st.selectbox(
+            "訪問時間",
+            options=[40, 60],
+            index=0,  # デフォルト: 40分
+            format_func=lambda x: f"{x}分",
+            key="visit2_duration"
+        )
+
+# 訪問日2の終了時刻計算
+v2_end_total = visit2_start_hour * 60 + visit2_start_min + visit2_duration
+v2_end_hour = v2_end_total // 60
+v2_end_min = v2_end_total % 60
+visit2_time = f"{visit2_start_hour}:{visit2_start_min:02d}-{v2_end_hour}:{v2_end_min:02d}"
+
+st.markdown(f"""
+<div style='background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%); 
+            padding: 0.8rem 1.5rem; 
+            border-radius: 12px; 
+            text-align: center;
+            margin: 1rem 0;'>
+    <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
+        📌 {visit2_weekday} {visit2_time}
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("---")
+
 # 振替設定セクション
 st.header("🔄 振替設定")
 
@@ -236,19 +377,24 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 関数定義
-def get_mondays_and_wednesdays(year, month):
-    calendar.setfirstweekday(6)
+def get_visit_days(year, month, weekday_name):
+    """指定した曜日の日付リストを取得"""
+    weekday_map = {
+        '月曜日': 1, '火曜日': 2, '水曜日': 3,
+        '木曜日': 4, '金曜日': 5
+    }
+    
+    weekday_num = weekday_map[weekday_name]
+    
+    calendar.setfirstweekday(6)  # 日曜始まり
     cal = calendar.monthcalendar(year, month)
-    mondays = []
-    wednesdays = []
+    days = []
     
     for week in cal:
-        if week[1] != 0:
-            mondays.append(week[1])
-        if week[3] != 0:
-            wednesdays.append(week[3])
+        if week[weekday_num] != 0:
+            days.append(week[weekday_num])
     
-    return sorted(mondays + wednesdays)
+    return sorted(days)
 
 def get_weekdays_in_same_week(year, month, day):
     from datetime import date, timedelta
@@ -265,7 +411,12 @@ def get_weekdays_in_same_week(year, month, day):
     
     return sorted(weekdays)
 
-transfer_options = get_mondays_and_wednesdays(year, month)
+# 定期訪問日1と訪問日2の日付を取得
+visit1_days = get_visit_days(year, month, visit1_weekday)
+visit2_days = get_visit_days(year, month, visit2_weekday)
+
+# 振替元の選択肢（定期訪問日を合わせたもの）
+transfer_options = sorted(visit1_days + visit2_days)
 
 # グリッドレイアウト
 col1, col2 = st.columns([1, 1])
@@ -438,24 +589,20 @@ else:
 st.markdown("---")
 
 # PDF作成関数
-def create_pdf(year, month, transfers_list):
-    monday_time = "11:20-12:00"
-    wednesday_time = "11:00-11:40"
-    
+def create_pdf(year, month, transfers_list, visit1_config, visit2_config):
+    """
+    visit1_config = {'weekday': '月曜日', 'time': '11:20-12:00', 'days': [3, 10, 17, 24]}
+    visit2_config = {'weekday': '水曜日', 'time': '11:00-11:40', 'days': [5, 12, 19, 26]}
+    """
     calendar.setfirstweekday(6)  # 日曜始まり
     cal = calendar.monthcalendar(year, month)
     
     canceled_dates = [t[0] for t in transfers_list]
     makeup_visits = {t[1]: t[2] for t in transfers_list}
     
-    monday_visits = []
-    wednesday_visits = []
-    
-    for week in cal:
-        if week[1] != 0 and week[1] not in canceled_dates:  # 月曜日
-            monday_visits.append(week[1])
-        if week[3] != 0 and week[3] not in canceled_dates:  # 水曜日
-            wednesday_visits.append(week[3])
+    # 休みを除いた訪問日リスト
+    visit1_actual_days = [d for d in visit1_config['days'] if d not in canceled_dates]
+    visit2_actual_days = [d for d in visit2_config['days'] if d not in canceled_dates]
     
     pdf_buffer = io.BytesIO()
     
@@ -473,9 +620,9 @@ def create_pdf(year, month, transfers_list):
         # 通常の訪問時間
         ax.text(0.2, len(cal) + 2.3, "【通常の訪問時間】", ha='left', va='center',
                fontsize=12, fontweight='bold')
-        ax.text(0.4, len(cal) + 1.95, f"・月曜日：{monday_time}", ha='left', va='center',
+        ax.text(0.4, len(cal) + 1.95, f"・{visit1_config['weekday']}：{visit1_config['time']}", ha='left', va='center',
                fontsize=11)
-        ax.text(0.4, len(cal) + 1.65, f"・水曜日：{wednesday_time}", ha='left', va='center',
+        ax.text(0.4, len(cal) + 1.65, f"・{visit2_config['weekday']}：{visit2_config['time']}", ha='left', va='center',
                fontsize=11)
         
         # 振替予定
@@ -527,12 +674,12 @@ def create_pdf(year, month, transfers_list):
                                fontsize=10, fontweight='bold', color='red')
                     
                     # 通常の訪問日
-                    elif day_num == 1 and day in monday_visits:
-                        ax.text(x + 0.5, y - 0.5, f"訪問予定\n{monday_time}", ha='center', va='center',
+                    elif day in visit1_actual_days:
+                        ax.text(x + 0.5, y - 0.5, f"訪問予定\n{visit1_config['time']}", ha='center', va='center',
                                fontsize=9, fontweight='bold', color='green')
                     
-                    elif day_num == 3 and day in wednesday_visits:
-                        ax.text(x + 0.5, y - 0.5, f"訪問予定\n{wednesday_time}", ha='center', va='center',
+                    elif day in visit2_actual_days:
+                        ax.text(x + 0.5, y - 0.5, f"訪問予定\n{visit2_config['time']}", ha='center', va='center',
                                fontsize=9, fontweight='bold', color='green')
                     
                     # 振替訪問
@@ -551,21 +698,33 @@ def create_pdf(year, month, transfers_list):
         plt.close()
     
     pdf_buffer.seek(0)
-    return pdf_buffer, monday_visits, wednesday_visits, canceled_dates
+    return pdf_buffer, visit1_actual_days, visit2_actual_days, canceled_dates
 
 # PDF作成ボタン
 st.markdown("<br><br>", unsafe_allow_html=True)
 if st.button("📥 PDFを作成", use_container_width=True, type="primary"):
     with st.spinner("📄 PDF作成中..."):
-        pdf_buffer, monday_visits, wednesday_visits, canceled_dates = create_pdf(
-            year, month, st.session_state.transfers
+        # 定期訪問の設定を準備
+        visit1_config = {
+            'weekday': visit1_weekday,
+            'time': visit1_time,
+            'days': visit1_days
+        }
+        visit2_config = {
+            'weekday': visit2_weekday,
+            'time': visit2_time,
+            'days': visit2_days
+        }
+        
+        pdf_buffer, visit1_actual, visit2_actual, canceled_dates = create_pdf(
+            year, month, st.session_state.transfers, visit1_config, visit2_config
         )
         
         st.success("✅ PDFが完成しました！")
         
         with st.expander("📋 作成内容を確認"):
-            st.write(f"**月曜日の訪問:** {monday_visits}")
-            st.write(f"**水曜日の訪問:** {wednesday_visits}")
+            st.write(f"**{visit1_weekday}の訪問:** {visit1_actual}")
+            st.write(f"**{visit2_weekday}の訪問:** {visit2_actual}")
             if canceled_dates:
                 st.write(f"**休みの日:** {canceled_dates}")
                 st.write(f"**振替日:** {[t[1] for t in st.session_state.transfers]}")
@@ -585,12 +744,18 @@ with st.expander("💡 使い方ガイド"):
     st.markdown("""
     ### 📝 基本的な流れ
     1. **年月を選択** → カレンダー設定
-    2. **振替がなければスキップ** → 直接PDF作成へ
-    3. **振替がある場合** → 振替情報を入力して追加
-    4. **PDFを作成** → ダウンロード
+    2. **定期訪問日を設定** → 曜日と時間を選択
+    3. **振替がなければスキップ** → 直接PDF作成へ
+    4. **振替がある場合** → 振替情報を入力して追加
+    5. **PDFを作成** → ダウンロード
+    
+    ### 📅 定期訪問設定
+    - **訪問日1・2**: 曜日と時間を自由に設定
+    - デフォルト: 月曜日 11:20-12:00 / 水曜日 11:00-11:40
+    - 訪問時間は40分/60分から選択
     
     ### 🔄 振替の設定方法
-    - **振替元**: 月・水曜日から選択
+    - **振替元**: 定期訪問日から選択
     - **振替先**: 同じ週の平日から選択
     - **時間**: 開始時刻 + 訪問時間で自動計算
     
@@ -606,7 +771,7 @@ st.markdown("""
             background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 100%);
             border-radius: 16px;'>
     <p style='color: #7f8c8d; font-size: 0.95rem; font-weight: 600; margin: 0;'>
-        💡 月曜日（11:20-12:00）と水曜日（11:00-11:40）は自動的に訪問日になります
+        💡 定期訪問日と時間は自由に設定できます
     </p>
     <p style='color: #95a5a6; font-size: 0.85rem; margin: 0.8rem 0 0 0;'>
         Created with ❤️ by Claude
