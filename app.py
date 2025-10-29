@@ -103,7 +103,7 @@ def get_weekdays_in_same_week(year, month, day):
 # 振替元の選択肢を取得
 transfer_options = get_mondays_and_wednesdays(year, month)
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3 = st.columns([2, 2, 3])
 
 with col1:
     if transfer_options:
@@ -139,9 +139,10 @@ with col2:
 with col3:
     st.write("**時間設定**")
     st.caption("定時: 9:00-17:30")
-    time_col1, time_col2, time_col3, time_col4 = st.columns(4)
     
-    with time_col1:
+    time_row1 = st.columns([3, 3, 4])
+    
+    with time_row1[0]:
         start_hour = st.selectbox(
             "開始時",
             options=list(range(9, 18)),  # 9-17時
@@ -150,7 +151,7 @@ with col3:
             key="start_hour"
         )
     
-    with time_col2:
+    with time_row1[1]:
         start_min = st.selectbox(
             "開始分",
             options=list(range(0, 60, 5)),  # 0-55分、5分刻み
@@ -159,44 +160,33 @@ with col3:
             key="start_min"
         )
     
-    with time_col3:
-        end_hour = st.selectbox(
-            "終了時",
-            options=list(range(9, 18)),  # 9-17時
-            index=3,  # デフォルト12時
-            format_func=lambda x: f"{x}時",
-            key="end_hour"
+    with time_row1[2]:
+        duration = st.selectbox(
+            "訪問時間",
+            options=[40, 60],
+            index=0,  # デフォルト40分
+            format_func=lambda x: f"{x}分間",
+            key="duration"
         )
     
-    with time_col4:
-        # 17時の場合は30分までに制限
-        if end_hour == 17:
-            end_min_options = list(range(0, 35, 5))  # 0-30分
-        else:
-            end_min_options = list(range(0, 60, 5))  # 0-55分
-        
-        end_min = st.selectbox(
-            "終了分",
-            options=end_min_options,
-            index=0,  # デフォルト00分
-            format_func=lambda x: f"{x:02d}分",
-            key="end_min"
-        )
+    # 終了時刻を自動計算
+    start_total_min = start_hour * 60 + start_min
+    end_total_min = start_total_min + duration
+    end_hour = end_total_min // 60
+    end_min = end_total_min % 60
+    
+    # 終了時刻の表示
+    st.success(f"⏰ **{start_hour}:{start_min:02d} ～ {end_hour}:{end_min:02d}** ({duration}分間)")
 
 # 時間文字列を生成
 transfer_time = f"{start_hour}:{start_min:02d}-{end_hour}:{end_min:02d}"
 
-# 時間の妥当性チェック
-start_total_min = start_hour * 60 + start_min
-end_total_min = end_hour * 60 + end_min
-
-# 終了時刻の上限チェック（17:30まで）
-if end_hour == 17 and end_min > 30:
-    st.warning("⚠️ 終了時刻は17:30までです")
-elif end_hour > 17:
-    st.warning("⚠️ 終了時刻は17:30までです")
-elif start_total_min >= end_total_min:
-    st.warning("⚠️ 終了時刻は開始時刻より後にしてください")
+# 定時チェック（17:30まで）
+if end_hour > 17 or (end_hour == 17 and end_min > 30):
+    st.error("⚠️ 終了時刻が定時（17:30）を超えています")
+    time_valid = False
+else:
+    time_valid = True
 
 col_btn1, col_btn2 = st.columns(2)
 
@@ -205,12 +195,8 @@ with col_btn1:
         # バリデーション
         if transfer_from is None or transfer_to is None:
             st.error("❌ 振替元と振替先を選択してください")
-        elif end_hour == 17 and end_min > 30:
-            st.error("❌ 終了時刻は17:30までです")
-        elif end_hour > 17:
-            st.error("❌ 終了時刻は17:30までです")
-        elif start_total_min >= end_total_min:
-            st.error("❌ 終了時刻は開始時刻より後にしてください")
+        elif not time_valid:
+            st.error("❌ 終了時刻が定時を超えています")
         else:
             # 既に同じ振替が登録されていないかチェック
             if any(t[0] == transfer_from for t in st.session_state.transfers):
@@ -416,7 +402,7 @@ with st.expander("💡 使い方"):
     1. **年と月を選択**
     2. **振替元**を選択（その月の月曜日・水曜日から選択）
     3. **振替先**を選択（振替元と同じ週の平日から選択）
-    4. **時間**を設定（開始: 9:00-17:00、終了: 9:00-17:30、5分刻み）
+    4. **開始時刻**と**訪問時間**（40分/60分）を選択 → 終了時刻は自動計算！
     5. **「振替を追加」ボタン**をクリック
     6. 複数の振替がある場合は繰り返す
     7. **「PDFを作成」ボタン**をクリック
@@ -428,8 +414,9 @@ with st.expander("💡 使い方"):
     ### 💡 ポイント
     - **振替元**: その月の訪問日（月・水）のみ選択可能
     - **振替先**: 振替元と同じ週の平日（月〜金）から選択可能
-    - **時間設定**: 9時〜17時30分の間で5分刻みで自由に設定可能
+    - **時間設定**: 開始時刻（9:00〜17:00）+ 訪問時間（40分/60分）で自動計算
+    - 終了時刻は自動で表示されるので入力ミスなし！
     - 振替先には曜日も表示されるので分かりやすい！
     """)
 
-st.caption("作成者: Claude | 月曜日（11:20-12:00）と水曜日（11:00-11:40）は自動的に訪問日になります | 振替時間は9:00-17:30の間で自由に設定可能")
+st.caption("作成者: Claude | 月曜日（11:20-12:00）と水曜日（11:00-11:40）は自動的に訪問日になります | 振替は開始時刻+訪問時間で設定")
