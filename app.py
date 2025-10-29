@@ -442,7 +442,7 @@ def create_pdf(year, month, transfers_list):
     monday_time = "11:20-12:00"
     wednesday_time = "11:00-11:40"
     
-    calendar.setfirstweekday(6)
+    calendar.setfirstweekday(6)  # 日曜始まり
     cal = calendar.monthcalendar(year, month)
     
     canceled_dates = [t[0] for t in transfers_list]
@@ -452,52 +452,90 @@ def create_pdf(year, month, transfers_list):
     wednesday_visits = []
     
     for week in cal:
-        if week[1] != 0 and week[1] not in canceled_dates:
+        if week[1] != 0 and week[1] not in canceled_dates:  # 月曜日
             monday_visits.append(week[1])
-        if week[3] != 0 and week[3] not in canceled_dates:
+        if week[3] != 0 and week[3] not in canceled_dates:  # 水曜日
             wednesday_visits.append(week[3])
     
     pdf_buffer = io.BytesIO()
     
     with PdfPages(pdf_buffer) as pdf:
         fig, ax = plt.subplots(figsize=(11.7, 8.3))
+        ax.set_xlim(0, 7)
+        ax.set_ylim(0, len(cal) + 2)
         ax.axis('off')
         
+        # タイトル
         title = f"{year}年{month}月 リハビリ訪問予定表"
-        ax.text(0.5, 0.95, title, ha='center', va='top', fontsize=24, fontweight='bold')
+        ax.text(3.5, len(cal) + 1.5, title, ha='center', va='center', 
+                fontsize=24, fontweight='bold')
         
-        y_pos = 0.87
+        # 曜日ヘッダー
+        weekdays = ['日', '月', '火', '水', '木', '金', '土']
+        for i, day in enumerate(weekdays):
+            color = 'red' if i == 0 else 'blue' if i == 6 else 'black'
+            ax.text(i + 0.5, len(cal) + 0.5, day, ha='center', va='center',
+                   fontsize=16, fontweight='bold', color=color)
         
-        if monday_visits:
-            text = f"月曜日 ({monday_time}): " + "、".join([f"{d}日" for d in monday_visits])
-            ax.text(0.1, y_pos, text, ha='left', va='top', fontsize=14, wrap=True)
-            y_pos -= 0.08
-        
-        if wednesday_visits:
-            text = f"水曜日 ({wednesday_time}): " + "、".join([f"{d}日" for d in wednesday_visits])
-            ax.text(0.1, y_pos, text, ha='left', va='top', fontsize=14, wrap=True)
-            y_pos -= 0.08
-        
-        if canceled_dates:
-            y_pos -= 0.05
-            ax.text(0.1, y_pos, "【振替】", ha='left', va='top', fontsize=16, fontweight='bold', color='red')
-            y_pos -= 0.06
+        # カレンダーグリッド
+        for week_num, week in enumerate(cal):
+            y = len(cal) - week_num
             
-            for from_day, to_day, time in transfers_list:
-                from_weekday = calendar.day_name[calendar.weekday(year, month, from_day)]
-                to_weekday = calendar.day_name[calendar.weekday(year, month, to_day)]
+            for day_num, day in enumerate(week):
+                x = day_num
                 
-                weekday_jp = {
-                    'Monday': '月', 'Tuesday': '火', 'Wednesday': '水',
-                    'Thursday': '木', 'Friday': '金', 'Saturday': '土', 'Sunday': '日'
-                }
-                from_wd_jp = weekday_jp.get(from_weekday, from_weekday)
-                to_wd_jp = weekday_jp.get(to_weekday, to_weekday)
+                # セルの枠線
+                rect = plt.Rectangle((x, y-1), 1, 1, fill=False, 
+                                    edgecolor='gray', linewidth=1.5)
+                ax.add_patch(rect)
                 
-                text = f"{month}月{from_day}日({from_wd_jp})は休み → {month}月{to_day}日({to_wd_jp}) {time}に振替"
-                ax.text(0.15, y_pos, text, ha='left', va='top', fontsize=13, color='red')
-                y_pos -= 0.05
+                if day != 0:
+                    # 日付の色
+                    text_color = 'red' if day_num == 0 else 'blue' if day_num == 6 else 'black'
+                    
+                    # 日付を表示
+                    ax.text(x + 0.15, y - 0.2, str(day), ha='left', va='top',
+                           fontsize=14, fontweight='bold', color=text_color)
+                    
+                    # 訪問情報を追加
+                    visit_info = []
+                    
+                    # 月曜日の訪問
+                    if day_num == 1 and day in monday_visits:
+                        visit_info.append(f"訪問\n{monday_time}")
+                    
+                    # 水曜日の訪問
+                    if day_num == 3 and day in wednesday_visits:
+                        visit_info.append(f"訪問\n{wednesday_time}")
+                    
+                    # 振替訪問
+                    if day in makeup_visits:
+                        visit_info.append(f"振替\n{makeup_visits[day]}")
+                    
+                    # 休みの日
+                    if day in canceled_dates:
+                        ax.text(x + 0.5, y - 0.5, "休み", ha='center', va='center',
+                               fontsize=12, fontweight='bold', color='red',
+                               bbox=dict(boxstyle='round', facecolor='pink', alpha=0.5))
+                    
+                    # 訪問情報を表示
+                    if visit_info:
+                        info_text = '\n'.join(visit_info)
+                        bg_color = 'lightblue' if day not in makeup_visits else 'lightyellow'
+                        ax.text(x + 0.5, y - 0.5, info_text, ha='center', va='center',
+                               fontsize=10, fontweight='bold',
+                               bbox=dict(boxstyle='round', facecolor=bg_color, alpha=0.7))
         
+        # 凡例
+        legend_y = -0.5
+        ax.text(0.5, legend_y, "■ 青背景: 通常訪問", ha='left', va='center',
+               fontsize=11, bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.7))
+        ax.text(2.5, legend_y, "■ 黄背景: 振替訪問", ha='left', va='center',
+               fontsize=11, bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.7))
+        ax.text(4.5, legend_y, "■ ピンク: 休み", ha='left', va='center',
+               fontsize=11, bbox=dict(boxstyle='round', facecolor='pink', alpha=0.5))
+        
+        plt.tight_layout()
         pdf.savefig(fig, bbox_inches='tight')
         plt.close()
     
