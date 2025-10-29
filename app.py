@@ -85,6 +85,41 @@ st.markdown("""
         transform: translateY(-1px);
     }
     
+    /* セレクトボックス内のテキストを濃く */
+    .stSelectbox div[data-baseweb="select"] > div {
+        color: #1a202c !important;
+        font-weight: 700 !important;
+        font-size: 1.1rem !important;
+    }
+    
+    /* セレクトボックスの選択された値 */
+    .stSelectbox div[data-baseweb="select"] span {
+        color: #1a202c !important;
+        font-weight: 700 !important;
+    }
+    
+    /* ドロップダウンリスト内のテキスト */
+    .stSelectbox ul[role="listbox"] li {
+        color: #2c3e50 !important;
+        font-weight: 600 !important;
+        font-size: 1.05rem !important;
+    }
+    
+    /* ドロップダウンリストの背景 */
+    .stSelectbox ul[role="listbox"] {
+        background: white !important;
+        border: 2px solid #e3e8ef !important;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+        border-radius: 12px !important;
+    }
+    
+    /* ドロップダウンのホバー */
+    .stSelectbox ul[role="listbox"] li:hover {
+        background: #f0f4ff !important;
+        color: #667eea !important;
+        font-weight: 700 !important;
+    }
+    
     /* ボタン */
     .stButton button {
         border-radius: 14px;
