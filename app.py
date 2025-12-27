@@ -922,17 +922,17 @@ def create_pdf(year, month, transfers_list, visit1_config, visit2_config=None, v
                     
                     # 通常の訪問日
                     elif day in visit1_actual_days:
-                        visit_text = f"訪問予定\n{visit1_config['time']}\n担当: {visit1_config['staff']}"
+                        visit_text = f"訪問予定\n{visit1_config['time']}\n{visit1_config['staff']}"
                         ax.text(x + 0.5, y - 0.5, visit_text, ha='center', va='center',
                                fontsize=8, fontweight='bold', color='green')
                     
                     elif day in visit2_actual_days:
-                        visit_text = f"訪問予定\n{visit2_config['time']}\n担当: {visit2_config['staff']}"
+                        visit_text = f"訪問予定\n{visit2_config['time']}\n{visit2_config['staff']}"
                         ax.text(x + 0.5, y - 0.5, visit_text, ha='center', va='center',
                                fontsize=8, fontweight='bold', color='green')
                     
                     elif day in visit3_actual_days:
-                        visit_text = f"訪問予定\n{visit3_config['time']}\n担当: {visit3_config['staff']}"
+                        visit_text = f"訪問予定\n{visit3_config['time']}\n{visit3_config['staff']}"
                         ax.text(x + 0.5, y - 0.5, visit_text, ha='center', va='center',
                                fontsize=8, fontweight='bold', color='green')
                     
