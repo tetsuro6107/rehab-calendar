@@ -911,7 +911,7 @@ def create_pdf(year, month, transfers_list, visit1_config, visit2_config=None, v
                     text_color = 'red' if day_num == 0 else 'blue' if day_num == 6 else 'black'
                     
                     # 日付を表示（左上）
-                    ax.text(x + 0.1, y - 0.15, str(day), ha='left', va='top',
+                    ax.text(x + 0.05, y - 0.1, str(day), ha='left', va='top',
                            fontsize=13, fontweight='bold', color=text_color)
                     
                     # 訪問・振替・休みの情報
