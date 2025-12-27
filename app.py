@@ -917,28 +917,37 @@ def create_pdf(year, month, transfers_list, visit1_config, visit2_config=None, v
                     # 訪問・振替・休みの情報
                     # 休みの日
                     if day in canceled_dates:
-                        ax.text(x + 0.5, y - 0.65, "リハビリ\nお休み", ha='center', va='center',
+                        ax.text(x + 0.5, y - 0.5, "リハビリ\nお休み", ha='center', va='center',
                                fontsize=12, fontweight='bold', color='red')
                     
                     # 通常の訪問日
                     elif day in visit1_actual_days:
-                        visit_text = f"{visit1_config['time']}\n{visit1_config['staff']}"
-                        ax.text(x + 0.5, y - 0.65, visit_text, ha='center', va='center',
+                        # 日付の横に訪問時間
+                        ax.text(x + 0.35, y - 0.15, visit1_config['time'], ha='left', va='top',
+                               fontsize=11, fontweight='bold', color='green')
+                        # 下にスタッフ名
+                        ax.text(x + 0.5, y - 0.65, visit1_config['staff'], ha='center', va='center',
                                fontsize=12, fontweight='bold', color='green')
                     
                     elif day in visit2_actual_days:
-                        visit_text = f"{visit2_config['time']}\n{visit2_config['staff']}"
-                        ax.text(x + 0.5, y - 0.65, visit_text, ha='center', va='center',
+                        # 日付の横に訪問時間
+                        ax.text(x + 0.35, y - 0.15, visit2_config['time'], ha='left', va='top',
+                               fontsize=11, fontweight='bold', color='green')
+                        # 下にスタッフ名
+                        ax.text(x + 0.5, y - 0.65, visit2_config['staff'], ha='center', va='center',
                                fontsize=12, fontweight='bold', color='green')
                     
                     elif day in visit3_actual_days:
-                        visit_text = f"{visit3_config['time']}\n{visit3_config['staff']}"
-                        ax.text(x + 0.5, y - 0.65, visit_text, ha='center', va='center',
+                        # 日付の横に訪問時間
+                        ax.text(x + 0.35, y - 0.15, visit3_config['time'], ha='left', va='top',
+                               fontsize=11, fontweight='bold', color='green')
+                        # 下にスタッフ名
+                        ax.text(x + 0.5, y - 0.65, visit3_config['staff'], ha='center', va='center',
                                fontsize=12, fontweight='bold', color='green')
                     
                     # 振替訪問
                     if day in makeup_visits:
-                        ax.text(x + 0.5, y - 0.65, f"振替訪問\n{makeup_visits[day]}", ha='center', va='center',
+                        ax.text(x + 0.5, y - 0.5, f"振替訪問\n{makeup_visits[day]}", ha='center', va='center',
                                fontsize=11, fontweight='bold', color='red')
         
         # フッター
