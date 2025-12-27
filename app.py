@@ -917,28 +917,28 @@ def create_pdf(year, month, transfers_list, visit1_config, visit2_config=None, v
                     # 訪問・振替・休みの情報
                     # 休みの日
                     if day in canceled_dates:
-                        ax.text(x + 0.5, y - 0.5, "リハビリ\nお休み", ha='center', va='center',
+                        ax.text(x + 0.5, y - 0.6, "リハビリ\nお休み", ha='center', va='center',
                                fontsize=10, fontweight='bold', color='red')
                     
                     # 通常の訪問日
                     elif day in visit1_actual_days:
                         visit_text = f"{visit1_config['time']}\n{visit1_config['staff']}"
-                        ax.text(x + 0.5, y - 0.5, visit_text, ha='center', va='center',
+                        ax.text(x + 0.5, y - 0.6, visit_text, ha='center', va='center',
                                fontsize=12, fontweight='bold', color='green')
                     
                     elif day in visit2_actual_days:
                         visit_text = f"{visit2_config['time']}\n{visit2_config['staff']}"
-                        ax.text(x + 0.5, y - 0.5, visit_text, ha='center', va='center',
+                        ax.text(x + 0.5, y - 0.6, visit_text, ha='center', va='center',
                                fontsize=12, fontweight='bold', color='green')
                     
                     elif day in visit3_actual_days:
                         visit_text = f"{visit3_config['time']}\n{visit3_config['staff']}"
-                        ax.text(x + 0.5, y - 0.5, visit_text, ha='center', va='center',
+                        ax.text(x + 0.5, y - 0.6, visit_text, ha='center', va='center',
                                fontsize=12, fontweight='bold', color='green')
                     
                     # 振替訪問
                     if day in makeup_visits:
-                        ax.text(x + 0.5, y - 0.5, f"振替訪問\n{makeup_visits[day]}", ha='center', va='center',
+                        ax.text(x + 0.5, y - 0.6, f"振替訪問\n{makeup_visits[day]}", ha='center', va='center',
                                fontsize=9, fontweight='bold', color='red')
         
         # フッター
