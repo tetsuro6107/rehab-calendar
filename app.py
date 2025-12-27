@@ -218,6 +218,56 @@ with col2:
 
 st.markdown("---")
 
+# スタッフ設定セクション
+st.header("👥 スタッフ設定")
+st.markdown("""
+<div style='background: linear-gradient(145deg, #e3f2fd 0%, #ffffff 100%);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            margin: 2rem 0;
+            border: 1px solid rgba(33, 150, 243, 0.2);'>
+    <p style='color: #1565c0; font-size: 0.95rem; font-weight: 600; margin: 0; text-align: center;'>
+        💡 訪問を担当するスタッフの名前を登録してください
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+# スタッフ名の入力
+col_s1, col_s2, col_s3 = st.columns(3)
+
+with col_s1:
+    staff1 = st.text_input(
+        "スタッフ1",
+        value="担当者A",
+        key="staff1",
+        max_chars=20
+    )
+
+with col_s2:
+    staff2 = st.text_input(
+        "スタッフ2",
+        value="担当者B",
+        key="staff2",
+        max_chars=20
+    )
+
+with col_s3:
+    staff3 = st.text_input(
+        "スタッフ3",
+        value="担当者C",
+        key="staff3",
+        max_chars=20
+    )
+
+# スタッフリストを作成
+staff_list = [s for s in [staff1, staff2, staff3] if s.strip()]
+
+if not staff_list:
+    st.warning("⚠️ 最低1人のスタッフ名を入力してください")
+
+st.markdown("---")
+
 # 定期訪問設定セクション
 st.header("📅 定期訪問設定")
 st.markdown("""
@@ -290,6 +340,16 @@ with col_v1_time:
             key="visit1_duration"
         )
 
+# 訪問日1の担当スタッフ選択
+st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
+visit1_staff = st.selectbox(
+    "担当スタッフを選択",
+    options=staff_list if staff_list else ["未設定"],
+    index=0,
+    key="visit1_staff",
+    label_visibility="collapsed"
+)
+
 # 訪問日1の終了時刻計算
 v1_end_total = visit1_start_hour * 60 + visit1_start_min + visit1_duration
 v1_end_hour = v1_end_total // 60
@@ -304,6 +364,9 @@ st.markdown(f"""
             margin: 1rem 0;'>
     <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
         📌 {visit1_weekday} {visit1_time}
+    </p>
+    <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
+        👤 担当: {visit1_staff}
     </p>
 </div>
 """, unsafe_allow_html=True)
@@ -354,6 +417,16 @@ if visit_count >= 2:
                 key="visit2_duration"
             )
 
+    # 訪問日2の担当スタッフ選択
+    st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
+    visit2_staff = st.selectbox(
+        "担当スタッフを選択",
+        options=staff_list if staff_list else ["未設定"],
+        index=min(1, len(staff_list)-1) if len(staff_list) > 1 else 0,
+        key="visit2_staff",
+        label_visibility="collapsed"
+    )
+
     # 訪問日2の終了時刻計算
     v2_end_total = visit2_start_hour * 60 + visit2_start_min + visit2_duration
     v2_end_hour = v2_end_total // 60
@@ -369,6 +442,9 @@ if visit_count >= 2:
         <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
             📌 {visit2_weekday} {visit2_time}
         </p>
+        <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
+            👤 担当: {visit2_staff}
+        </p>
     </div>
     """, unsafe_allow_html=True)
 else:
@@ -378,6 +454,7 @@ else:
     visit2_start_hour = None
     visit2_start_min = None
     visit2_duration = None
+    visit2_staff = None
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -425,6 +502,16 @@ if visit_count >= 3:
                 key="visit3_duration"
             )
 
+    # 訪問日3の担当スタッフ選択
+    st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
+    visit3_staff = st.selectbox(
+        "担当スタッフを選択",
+        options=staff_list if staff_list else ["未設定"],
+        index=min(2, len(staff_list)-1) if len(staff_list) > 2 else 0,
+        key="visit3_staff",
+        label_visibility="collapsed"
+    )
+
     # 訪問日3の終了時刻計算
     v3_end_total = visit3_start_hour * 60 + visit3_start_min + visit3_duration
     v3_end_hour = v3_end_total // 60
@@ -440,6 +527,9 @@ if visit_count >= 3:
         <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
             📌 {visit3_weekday} {visit3_time}
         </p>
+        <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
+            👤 担当: {visit3_staff}
+        </p>
     </div>
     """, unsafe_allow_html=True)
 else:
@@ -449,6 +539,7 @@ else:
     visit3_start_hour = None
     visit3_start_min = None
     visit3_duration = None
+    visit3_staff = None
 
 st.markdown("---")
 
@@ -801,16 +892,19 @@ def create_pdf(year, month, transfers_list, visit1_config, visit2_config=None, v
                     
                     # 通常の訪問日
                     elif day in visit1_actual_days:
-                        ax.text(x + 0.5, y - 0.5, f"訪問予定\n{visit1_config['time']}", ha='center', va='center',
-                               fontsize=9, fontweight='bold', color='green')
+                        visit_text = f"訪問予定\n{visit1_config['time']}\n担当: {visit1_config['staff']}"
+                        ax.text(x + 0.5, y - 0.5, visit_text, ha='center', va='center',
+                               fontsize=8, fontweight='bold', color='green')
                     
                     elif day in visit2_actual_days:
-                        ax.text(x + 0.5, y - 0.5, f"訪問予定\n{visit2_config['time']}", ha='center', va='center',
-                               fontsize=9, fontweight='bold', color='green')
+                        visit_text = f"訪問予定\n{visit2_config['time']}\n担当: {visit2_config['staff']}"
+                        ax.text(x + 0.5, y - 0.5, visit_text, ha='center', va='center',
+                               fontsize=8, fontweight='bold', color='green')
                     
                     elif day in visit3_actual_days:
-                        ax.text(x + 0.5, y - 0.5, f"訪問予定\n{visit3_config['time']}", ha='center', va='center',
-                               fontsize=9, fontweight='bold', color='green')
+                        visit_text = f"訪問予定\n{visit3_config['time']}\n担当: {visit3_config['staff']}"
+                        ax.text(x + 0.5, y - 0.5, visit_text, ha='center', va='center',
+                               fontsize=8, fontweight='bold', color='green')
                     
                     # 振替訪問
                     if day in makeup_visits:
@@ -838,7 +932,8 @@ if st.button("📥 PDFを作成", use_container_width=True, type="primary"):
         visit1_config = {
             'weekday': visit1_weekday,
             'time': visit1_time,
-            'days': visit1_days
+            'days': visit1_days,
+            'staff': visit1_staff
         }
         
         # 週2回以上の場合
@@ -846,7 +941,8 @@ if st.button("📥 PDFを作成", use_container_width=True, type="primary"):
             visit2_config = {
                 'weekday': visit2_weekday,
                 'time': visit2_time,
-                'days': visit2_days
+                'days': visit2_days,
+                'staff': visit2_staff
             }
         else:
             visit2_config = None
@@ -856,7 +952,8 @@ if st.button("📥 PDFを作成", use_container_width=True, type="primary"):
             visit3_config = {
                 'weekday': visit3_weekday,
                 'time': visit3_time,
-                'days': visit3_days
+                'days': visit3_days,
+                'staff': visit3_staff
             }
         else:
             visit3_config = None
@@ -892,17 +989,24 @@ with st.expander("💡 使い方ガイド"):
     st.markdown("""
     ### 📝 基本的な流れ
     1. **年月を選択** → カレンダー設定
-    2. **訪問回数を選択** → 週1回、週2回、週3回から選択
-    3. **定期訪問日を設定** → 曜日と時間を選択
-    4. **振替がなければスキップ** → 直接PDF作成へ
-    5. **振替がある場合** → 振替情報を入力して追加
-    6. **PDFを作成** → ダウンロード
+    2. **スタッフ名を登録** → 最大3名まで登録可能
+    3. **訪問回数を選択** → 週1回、週2回、週3回から選択
+    4. **定期訪問日を設定** → 曜日・時間・担当スタッフを選択
+    5. **振替がなければスキップ** → 直接PDF作成へ
+    6. **振替がある場合** → 振替情報を入力して追加
+    7. **PDFを作成** → ダウンロード
+    
+    ### 👥 スタッフ設定
+    - **スタッフ登録**: 最大3名まで登録可能
+    - 各訪問日に担当スタッフを割り当て
+    - PDFのカレンダーに担当者名が表示されます
     
     ### 📅 定期訪問設定
     - **訪問回数**: 週1回、週2回、週3回から選択
     - **週1回**: 訪問日1のみ設定
     - **週2回**: 訪問日1と2を設定
     - **週3回**: 訪問日1、2、3を設定
+    - 各訪問日に担当スタッフを選択
     - デフォルト: 月曜日 11:20-12:00 / 水曜日 11:00-11:40
     - 訪問時間は40分/60分から選択
     
@@ -913,6 +1017,7 @@ with st.expander("💡 使い方ガイド"):
     
     ### 💡 ポイント
     - 週1回～週3回まで柔軟に対応
+    - 担当スタッフがカレンダーに明記される
     - 終了時刻は自動計算されるので入力ミスなし
     - 定時（9:00-17:30）を超えるとエラー表示
     - 同じ日の重複登録を自動チェック
@@ -924,7 +1029,7 @@ st.markdown("""
             background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 100%);
             border-radius: 16px;'>
     <p style='color: #7f8c8d; font-size: 0.95rem; font-weight: 600; margin: 0;'>
-        💡 週1回～週3回の訪問に対応 | 曜日・時間は自由に設定できます
+        💡 週1回～週3回の訪問に対応 | スタッフ名をカレンダーに表示
     </p>
     <p style='color: #95a5a6; font-size: 0.85rem; margin: 0.8rem 0 0 0;'>
         Created with ❤️ by Claude
