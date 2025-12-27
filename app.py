@@ -186,6 +186,14 @@ st.markdown("""
 if 'transfers' not in st.session_state:
     st.session_state.transfers = []
 
+# スタッフ名のデフォルト値を設定
+if 'staff1' not in st.session_state:
+    st.session_state.staff1 = ""
+if 'staff2' not in st.session_state:
+    st.session_state.staff2 = ""
+if 'staff3' not in st.session_state:
+    st.session_state.staff3 = ""
+
 # タイトル
 st.title("📅 リハビリ訪問予定表")
 st.markdown("""
@@ -238,31 +246,38 @@ col_s1, col_s2, col_s3 = st.columns(3)
 
 with col_s1:
     staff1 = st.text_input(
-        "スタッフ1",
-        value="担当者A",
-        key="staff1",
+        "スタッフ1（例: 田中太郎）",
+        placeholder="スタッフ名を入力",
+        key="staff1_input",
         max_chars=20
     )
 
 with col_s2:
     staff2 = st.text_input(
-        "スタッフ2",
-        value="担当者B",
-        key="staff2",
+        "スタッフ2（例: 佐藤花子）",
+        placeholder="スタッフ名を入力",
+        key="staff2_input",
         max_chars=20
     )
 
 with col_s3:
     staff3 = st.text_input(
-        "スタッフ3",
-        value="担当者C",
-        key="staff3",
+        "スタッフ3（例: 鈴木一郎）",
+        placeholder="スタッフ名を入力",
+        key="staff3_input",
         max_chars=20
     )
 
-# スタッフリストを作成
-staff_list = [s for s in [staff1, staff2, staff3] if s.strip()]
+# スタッフリストを作成（入力されたもののみ）
+staff_list = []
+if staff1.strip():
+    staff_list.append(staff1.strip())
+if staff2.strip():
+    staff_list.append(staff2.strip())
+if staff3.strip():
+    staff_list.append(staff3.strip())
 
+# 最低1人は必要
 if not staff_list:
     st.warning("⚠️ 最低1人のスタッフ名を入力してください")
 
@@ -342,13 +357,18 @@ with col_v1_time:
 
 # 訪問日1の担当スタッフ選択
 st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
-visit1_staff = st.selectbox(
-    "担当スタッフを選択",
-    options=staff_list if staff_list else ["未設定"],
-    index=0,
-    key="visit1_staff",
-    label_visibility="collapsed"
-)
+
+if staff_list:
+    visit1_staff = st.selectbox(
+        "担当スタッフを選択",
+        options=staff_list,
+        index=0,
+        key="visit1_staff",
+        label_visibility="collapsed"
+    )
+else:
+    st.info("💡 スタッフ設定でスタッフ名を入力してください")
+    visit1_staff = "未設定"
 
 # 訪問日1の終了時刻計算
 v1_end_total = visit1_start_hour * 60 + visit1_start_min + visit1_duration
@@ -419,13 +439,18 @@ if visit_count >= 2:
 
     # 訪問日2の担当スタッフ選択
     st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
-    visit2_staff = st.selectbox(
-        "担当スタッフを選択",
-        options=staff_list if staff_list else ["未設定"],
-        index=min(1, len(staff_list)-1) if len(staff_list) > 1 else 0,
-        key="visit2_staff",
-        label_visibility="collapsed"
-    )
+    
+    if staff_list:
+        visit2_staff = st.selectbox(
+            "担当スタッフを選択",
+            options=staff_list,
+            index=min(1, len(staff_list)-1) if len(staff_list) > 1 else 0,
+            key="visit2_staff",
+            label_visibility="collapsed"
+        )
+    else:
+        st.info("💡 スタッフ設定でスタッフ名を入力してください")
+        visit2_staff = "未設定"
 
     # 訪問日2の終了時刻計算
     v2_end_total = visit2_start_hour * 60 + visit2_start_min + visit2_duration
@@ -504,13 +529,18 @@ if visit_count >= 3:
 
     # 訪問日3の担当スタッフ選択
     st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
-    visit3_staff = st.selectbox(
-        "担当スタッフを選択",
-        options=staff_list if staff_list else ["未設定"],
-        index=min(2, len(staff_list)-1) if len(staff_list) > 2 else 0,
-        key="visit3_staff",
-        label_visibility="collapsed"
-    )
+    
+    if staff_list:
+        visit3_staff = st.selectbox(
+            "担当スタッフを選択",
+            options=staff_list,
+            index=min(2, len(staff_list)-1) if len(staff_list) > 2 else 0,
+            key="visit3_staff",
+            label_visibility="collapsed"
+        )
+    else:
+        st.info("💡 スタッフ設定でスタッフ名を入力してください")
+        visit3_staff = "未設定"
 
     # 訪問日3の終了時刻計算
     v3_end_total = visit3_start_hour * 60 + visit3_start_min + visit3_duration
