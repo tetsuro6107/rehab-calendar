@@ -573,8 +573,53 @@ else:
 
 st.markdown("---")
 
-# 振替設定セクション
-st.header("🔄 振替設定")
+# キャンセル・振替設定セクション
+st.header("📅 キャンセル・振替設定")
+
+# その月のカレンダーを表示
+st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin:1.5rem 0 1rem 0;'>📆 今月のカレンダー</p>", unsafe_allow_html=True)
+
+import calendar as cal_module
+cal_module.setfirstweekday(6)  # 日曜始まり
+month_calendar = cal_module.monthcalendar(year, month)
+
+# カレンダーのヘッダー
+calendar_header = "| 日 | 月 | 火 | 水 | 木 | 金 | 土 |"
+calendar_separator = "|:---:|:---:|:---:|:---:|:---:|:---:|:---:|"
+
+# カレンダーの行を生成
+calendar_rows = []
+for week in month_calendar:
+    row = "|"
+    for i, day in enumerate(week):
+        if day == 0:
+            row += "   |"
+        else:
+            # 訪問日をマーク
+            is_visit_day = False
+            if day in visit1_days:
+                is_visit_day = True
+            elif visit_count >= 2 and day in visit2_days:
+                is_visit_day = True
+            elif visit_count >= 3 and day in visit3_days:
+                is_visit_day = True
+            
+            if is_visit_day:
+                row += f" **{day}** 🏥|"
+            elif i == 0:  # 日曜日
+                row += f" <span style='color:red'>{day}</span>|"
+            elif i == 6:  # 土曜日
+                row += f" <span style='color:blue'>{day}</span>|"
+            else:
+                row += f" {day}|"
+    calendar_rows.append(row)
+
+calendar_md = calendar_header + "\n" + calendar_separator + "\n" + "\n".join(calendar_rows)
+
+st.markdown(calendar_md, unsafe_allow_html=True)
+st.markdown("<p style='color: #7f8c8d; font-size: 0.85rem; margin: 0.5rem 0 1.5rem 0; text-align: center;'>🏥 = 定期訪問日</p>", unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 # 振替機能の有効/無効選択
 st.markdown("""
@@ -592,7 +637,7 @@ st.markdown("""
 
 use_transfer = st.checkbox(
     "🔄 振替機能を使用する（休んだ日を別の日に振り替える）",
-    value=False,
+    value=True,
     key="use_transfer",
     help="チェックを外すと、キャンセルのみ（振替なし）になります"
 )
