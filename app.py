@@ -323,7 +323,7 @@ st.markdown("---")
 if mode == "通常モード":
     # 定期訪問設定セクション
     st.header("📅 定期訪問設定")
-st.markdown("""
+    st.markdown("""
 <div style='background: linear-gradient(145deg, #e8f5e9 0%, #ffffff 100%);
             padding: 2rem;
             border-radius: 20px;
@@ -336,8 +336,8 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 訪問回数選択
-st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.15rem; margin-bottom:1rem;'>📊 週の訪問回数</p>", unsafe_allow_html=True)
+    # 訪問回数選択
+    st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.15rem; margin-bottom:1rem;'>📊 週の訪問回数</p>", unsafe_allow_html=True)
 
 visit_count = st.selectbox(
     "訪問回数を選択",
@@ -609,7 +609,8 @@ else:
     visit3_duration = None
     visit3_staff = None
 
-else:
+# 特指示モードの設定
+if mode == "特指示モード":
     # 特指示モード設定セクション
     st.header("🏥 特別訪問看護指示設定")
     st.markdown("""
