@@ -680,209 +680,166 @@ if mode == "特指示モード":
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # 訪問パターン選択
-    st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.15rem; margin-bottom:1rem;'>📊 訪問パターン</p>", unsafe_allow_html=True)
+    # 訪問回数選択
+    st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.15rem; margin-bottom:1rem;'>📊 週の訪問回数</p>", unsafe_allow_html=True)
     
-    toku_pattern = st.radio(
-        "訪問パターンを選択",
-        options=["毎日1回", "毎日2回", "週6日（日曜休み）", "週6日（土曜休み）"],
-        index=0,
-        key="toku_pattern",
+    toku_visit_count = st.selectbox(
+        "訪問回数を選択",
+        options=[1, 2, 3, 4, 5],
+        format_func=lambda x: f"週{x}回",
+        index=1,  # デフォルト: 週2回
+        key="toku_visit_count",
         label_visibility="collapsed"
     )
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # 訪問回数によって設定項目を分ける
-    if toku_pattern == "毎日2回":
-        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 訪問 1回目</p>", unsafe_allow_html=True)
-        
-        col_t1, col_t2, col_t3 = st.columns(3)
-        
-        with col_t1:
-            toku1_start_hour = st.selectbox(
-                "開始時",
-                options=list(range(9, 18)),
-                index=0,  # 9時
-                format_func=lambda x: f"{x}時",
-                key="toku1_start_hour"
-            )
-        
-        with col_t2:
-            toku1_start_min = st.selectbox(
-                "開始分",
-                options=list(range(0, 60, 5)),
-                index=0,  # 00分
-                format_func=lambda x: f"{x:02d}分",
-                key="toku1_start_min"
-            )
-        
-        with col_t3:
-            toku1_duration = st.selectbox(
-                "訪問時間",
-                options=[40, 60],
-                index=0,
-                format_func=lambda x: f"{x}分",
-                key="toku1_duration"
-            )
-        
-        # 担当スタッフ1
-        st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
-        if staff_list:
-            toku1_staff = st.selectbox(
-                "担当スタッフを選択",
-                options=staff_list,
-                index=0,
-                key="toku1_staff",
-                label_visibility="collapsed"
-            )
-        else:
-            st.info("💡 スタッフ設定でスタッフ名を入力してください")
-            toku1_staff = "未設定"
-        
-        # 終了時刻計算
-        t1_end_total = toku1_start_hour * 60 + toku1_start_min + toku1_duration
-        t1_end_hour = t1_end_total // 60
-        t1_end_min = t1_end_total % 60
-        toku1_time = f"{toku1_start_hour}:{toku1_start_min:02d}-{t1_end_hour}:{t1_end_min:02d}"
-        
-        st.markdown(f"""
-        <div style='background: linear-gradient(135deg, #ef5350 0%, #e57373 100%); 
-                    padding: 0.8rem 1.5rem; 
-                    border-radius: 12px; 
-                    text-align: center;
-                    margin: 1rem 0;'>
-            <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
-                📌 1回目: {toku1_time}
-            </p>
-            <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
-                👤 担当: {toku1_staff}
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("<br>", unsafe_allow_html=True)
-        
-        # 2回目
-        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 訪問 2回目</p>", unsafe_allow_html=True)
-        
-        col_t4, col_t5, col_t6 = st.columns(3)
-        
-        with col_t4:
-            toku2_start_hour = st.selectbox(
-                "開始時",
-                options=list(range(9, 18)),
-                index=5,  # 14時
-                format_func=lambda x: f"{x}時",
-                key="toku2_start_hour"
-            )
-        
-        with col_t5:
-            toku2_start_min = st.selectbox(
-                "開始分",
-                options=list(range(0, 60, 5)),
-                index=0,  # 00分
-                format_func=lambda x: f"{x:02d}分",
-                key="toku2_start_min"
-            )
-        
-        with col_t6:
-            toku2_duration = st.selectbox(
-                "訪問時間",
-                options=[40, 60],
-                index=0,
-                format_func=lambda x: f"{x}分",
-                key="toku2_duration"
-            )
-        
-        # 担当スタッフ2
-        st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
-        if staff_list:
-            toku2_staff = st.selectbox(
-                "担当スタッフを選択",
-                options=staff_list,
-                index=0,
-                key="toku2_staff",
-                label_visibility="collapsed"
-            )
-        else:
-            st.info("💡 スタッフ設定でスタッフ名を入力してください")
-            toku2_staff = "未設定"
-        
-        # 終了時刻計算
-        t2_end_total = toku2_start_hour * 60 + toku2_start_min + toku2_duration
-        t2_end_hour = t2_end_total // 60
-        t2_end_min = t2_end_total % 60
-        toku2_time = f"{toku2_start_hour}:{toku2_start_min:02d}-{t2_end_hour}:{t2_end_min:02d}"
-        
-        st.markdown(f"""
-        <div style='background: linear-gradient(135deg, #ef5350 0%, #e57373 100%); 
-                    padding: 0.8rem 1.5rem; 
-                    border-radius: 12px; 
-                    text-align: center;
-                    margin: 1rem 0;'>
-            <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
-                📌 2回目: {toku2_time}
-            </p>
-            <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
-                👤 担当: {toku2_staff}
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+    # 訪問日1
+    st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 訪問日 1</p>", unsafe_allow_html=True)
     
-    else:
-        # 毎日1回、または週6日の場合
-        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>⏰ 訪問時間</p>", unsafe_allow_html=True)
+    col_tv1_day, col_tv1_time = st.columns([1, 2])
+    
+    with col_tv1_day:
+        toku_visit1_weekday = st.selectbox(
+            "曜日",
+            options=['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'],
+            index=0,  # デフォルト: 月曜日
+            key="toku_visit1_weekday"
+        )
+    
+    with col_tv1_time:
+        tv1_col1, tv1_col2, tv1_col3 = st.columns(3)
         
-        col_t1, col_t2, col_t3 = st.columns(3)
-        
-        with col_t1:
-            toku1_start_hour = st.selectbox(
+        with tv1_col1:
+            toku_visit1_start_hour = st.selectbox(
                 "開始時",
                 options=list(range(9, 18)),
-                index=5,  # 14時
+                index=2,  # デフォルト: 11時
                 format_func=lambda x: f"{x}時",
-                key="toku1_start_hour"
+                key="toku_visit1_start_hour"
             )
         
-        with col_t2:
-            toku1_start_min = st.selectbox(
+        with tv1_col2:
+            toku_visit1_start_min = st.selectbox(
                 "開始分",
                 options=list(range(0, 60, 5)),
-                index=0,  # 00分
+                index=4,  # デフォルト: 20分
                 format_func=lambda x: f"{x:02d}分",
-                key="toku1_start_min"
+                key="toku_visit1_start_min"
             )
         
-        with col_t3:
-            toku1_duration = st.selectbox(
+        with tv1_col3:
+            toku_visit1_duration = st.selectbox(
                 "訪問時間",
                 options=[40, 60],
-                index=0,
+                index=0,  # デフォルト: 40分
                 format_func=lambda x: f"{x}分",
-                key="toku1_duration"
+                key="toku_visit1_duration"
             )
-        
-        # 担当スタッフ
+    
+    # 訪問日1の担当スタッフ選択
+    st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
+    
+    if staff_list:
+        toku_visit1_staff = st.selectbox(
+            "担当スタッフを選択",
+            options=staff_list,
+            index=0,
+            key="toku_visit1_staff",
+            label_visibility="collapsed"
+        )
+    else:
+        st.info("💡 スタッフ設定でスタッフ名を入力してください")
+        toku_visit1_staff = "未設定"
+    
+    # 訪問日1の終了時刻計算
+    tv1_end_total = toku_visit1_start_hour * 60 + toku_visit1_start_min + toku_visit1_duration
+    tv1_end_hour = tv1_end_total // 60
+    tv1_end_min = tv1_end_total % 60
+    toku_visit1_time = f"{toku_visit1_start_hour}:{toku_visit1_start_min:02d}-{tv1_end_hour}:{tv1_end_min:02d}"
+    
+    st.markdown(f"""
+    <div style='background: linear-gradient(135deg, #ef5350 0%, #e57373 100%); 
+                padding: 0.8rem 1.5rem; 
+                border-radius: 12px; 
+                text-align: center;
+                margin: 1rem 0;'>
+        <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
+            📌 {toku_visit1_weekday} {toku_visit1_time}
+        </p>
+        <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
+            👤 担当: {toku_visit1_staff}
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # 訪問日2（週2回以上の場合のみ表示）
+    if toku_visit_count >= 2:
+        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 訪問日 2</p>", unsafe_allow_html=True)
+
+        col_tv2_day, col_tv2_time = st.columns([1, 2])
+
+        with col_tv2_day:
+            toku_visit2_weekday = st.selectbox(
+                "曜日",
+                options=['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'],
+                index=2,  # デフォルト: 水曜日
+                key="toku_visit2_weekday"
+            )
+
+        with col_tv2_time:
+            tv2_col1, tv2_col2, tv2_col3 = st.columns(3)
+            
+            with tv2_col1:
+                toku_visit2_start_hour = st.selectbox(
+                    "開始時",
+                    options=list(range(9, 18)),
+                    index=2,  # デフォルト: 11時
+                    format_func=lambda x: f"{x}時",
+                    key="toku_visit2_start_hour"
+                )
+            
+            with tv2_col2:
+                toku_visit2_start_min = st.selectbox(
+                    "開始分",
+                    options=list(range(0, 60, 5)),
+                    index=0,  # デフォルト: 00分
+                    format_func=lambda x: f"{x:02d}分",
+                    key="toku_visit2_start_min"
+                )
+            
+            with tv2_col3:
+                toku_visit2_duration = st.selectbox(
+                    "訪問時間",
+                    options=[40, 60],
+                    index=0,  # デフォルト: 40分
+                    format_func=lambda x: f"{x}分",
+                    key="toku_visit2_duration"
+                )
+
+        # 訪問日2の担当スタッフ選択
         st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
+        
         if staff_list:
-            toku1_staff = st.selectbox(
+            toku_visit2_staff = st.selectbox(
                 "担当スタッフを選択",
                 options=staff_list,
-                index=0,
-                key="toku1_staff",
+                index=min(1, len(staff_list)-1) if len(staff_list) > 1 else 0,
+                key="toku_visit2_staff",
                 label_visibility="collapsed"
             )
         else:
             st.info("💡 スタッフ設定でスタッフ名を入力してください")
-            toku1_staff = "未設定"
-        
-        # 終了時刻計算
-        t1_end_total = toku1_start_hour * 60 + toku1_start_min + toku1_duration
-        t1_end_hour = t1_end_total // 60
-        t1_end_min = t1_end_total % 60
-        toku1_time = f"{toku1_start_hour}:{toku1_start_min:02d}-{t1_end_hour}:{t1_end_min:02d}"
-        
+            toku_visit2_staff = "未設定"
+
+        # 訪問日2の終了時刻計算
+        tv2_end_total = toku_visit2_start_hour * 60 + toku_visit2_start_min + toku_visit2_duration
+        tv2_end_hour = tv2_end_total // 60
+        tv2_end_min = tv2_end_total % 60
+        toku_visit2_time = f"{toku_visit2_start_hour}:{toku_visit2_start_min:02d}-{tv2_end_hour}:{tv2_end_min:02d}"
+
         st.markdown(f"""
         <div style='background: linear-gradient(135deg, #ef5350 0%, #e57373 100%); 
                     padding: 0.8rem 1.5rem; 
@@ -890,17 +847,279 @@ if mode == "特指示モード":
                     text-align: center;
                     margin: 1rem 0;'>
             <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
-                📌 {toku1_time}
+                📌 {toku_visit2_weekday} {toku_visit2_time}
             </p>
             <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
-                👤 担当: {toku1_staff}
+                👤 担当: {toku_visit2_staff}
             </p>
         </div>
         """, unsafe_allow_html=True)
+    else:
+        # 週1回の場合はダミー値
+        toku_visit2_weekday = None
+        toku_visit2_time = None
+        toku_visit2_staff = None
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 訪問日3（週3回以上の場合のみ表示）
+    if toku_visit_count >= 3:
+        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 訪問日 3</p>", unsafe_allow_html=True)
+
+        col_tv3_day, col_tv3_time = st.columns([1, 2])
+
+        with col_tv3_day:
+            toku_visit3_weekday = st.selectbox(
+                "曜日",
+                options=['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'],
+                index=4,  # デフォルト: 金曜日
+                key="toku_visit3_weekday"
+            )
+
+        with col_tv3_time:
+            tv3_col1, tv3_col2, tv3_col3 = st.columns(3)
+            
+            with tv3_col1:
+                toku_visit3_start_hour = st.selectbox(
+                    "開始時",
+                    options=list(range(9, 18)),
+                    index=2,  # デフォルト: 11時
+                    format_func=lambda x: f"{x}時",
+                    key="toku_visit3_start_hour"
+                )
+            
+            with tv3_col2:
+                toku_visit3_start_min = st.selectbox(
+                    "開始分",
+                    options=list(range(0, 60, 5)),
+                    index=0,  # デフォルト: 00分
+                    format_func=lambda x: f"{x:02d}分",
+                    key="toku_visit3_start_min"
+                )
+            
+            with tv3_col3:
+                toku_visit3_duration = st.selectbox(
+                    "訪問時間",
+                    options=[40, 60],
+                    index=0,  # デフォルト: 40分
+                    format_func=lambda x: f"{x}分",
+                    key="toku_visit3_duration"
+                )
+
+        # 訪問日3の担当スタッフ選択
+        st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
         
-        # 2回目のダミー値
-        toku2_time = None
-        toku2_staff = None
+        if staff_list:
+            toku_visit3_staff = st.selectbox(
+                "担当スタッフを選択",
+                options=staff_list,
+                index=min(2, len(staff_list)-1) if len(staff_list) > 2 else 0,
+                key="toku_visit3_staff",
+                label_visibility="collapsed"
+            )
+        else:
+            st.info("💡 スタッフ設定でスタッフ名を入力してください")
+            toku_visit3_staff = "未設定"
+
+        # 訪問日3の終了時刻計算
+        tv3_end_total = toku_visit3_start_hour * 60 + toku_visit3_start_min + toku_visit3_duration
+        tv3_end_hour = tv3_end_total // 60
+        tv3_end_min = tv3_end_total % 60
+        toku_visit3_time = f"{toku_visit3_start_hour}:{toku_visit3_start_min:02d}-{tv3_end_hour}:{tv3_end_min:02d}"
+
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #ef5350 0%, #e57373 100%); 
+                    padding: 0.8rem 1.5rem; 
+                    border-radius: 12px; 
+                    text-align: center;
+                    margin: 1rem 0;'>
+            <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
+                📌 {toku_visit3_weekday} {toku_visit3_time}
+            </p>
+            <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
+                👤 担当: {toku_visit3_staff}
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        # 訪問日3が無効の場合のダミー値
+        toku_visit3_weekday = None
+        toku_visit3_time = None
+        toku_visit3_staff = None
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 訪問日4（週4回以上の場合のみ表示）
+    if toku_visit_count >= 4:
+        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 訪問日 4</p>", unsafe_allow_html=True)
+
+        col_tv4_day, col_tv4_time = st.columns([1, 2])
+
+        with col_tv4_day:
+            toku_visit4_weekday = st.selectbox(
+                "曜日",
+                options=['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'],
+                index=1,  # デフォルト: 火曜日
+                key="toku_visit4_weekday"
+            )
+
+        with col_tv4_time:
+            tv4_col1, tv4_col2, tv4_col3 = st.columns(3)
+            
+            with tv4_col1:
+                toku_visit4_start_hour = st.selectbox(
+                    "開始時",
+                    options=list(range(9, 18)),
+                    index=2,  # デフォルト: 11時
+                    format_func=lambda x: f"{x}時",
+                    key="toku_visit4_start_hour"
+                )
+            
+            with tv4_col2:
+                toku_visit4_start_min = st.selectbox(
+                    "開始分",
+                    options=list(range(0, 60, 5)),
+                    index=0,  # デフォルト: 00分
+                    format_func=lambda x: f"{x:02d}分",
+                    key="toku_visit4_start_min"
+                )
+            
+            with tv4_col3:
+                toku_visit4_duration = st.selectbox(
+                    "訪問時間",
+                    options=[40, 60],
+                    index=0,  # デフォルト: 40分
+                    format_func=lambda x: f"{x}分",
+                    key="toku_visit4_duration"
+                )
+
+        # 訪問日4の担当スタッフ選択
+        st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
+        
+        if staff_list:
+            toku_visit4_staff = st.selectbox(
+                "担当スタッフを選択",
+                options=staff_list,
+                index=0,
+                key="toku_visit4_staff",
+                label_visibility="collapsed"
+            )
+        else:
+            st.info("💡 スタッフ設定でスタッフ名を入力してください")
+            toku_visit4_staff = "未設定"
+
+        # 訪問日4の終了時刻計算
+        tv4_end_total = toku_visit4_start_hour * 60 + toku_visit4_start_min + toku_visit4_duration
+        tv4_end_hour = tv4_end_total // 60
+        tv4_end_min = tv4_end_total % 60
+        toku_visit4_time = f"{toku_visit4_start_hour}:{toku_visit4_start_min:02d}-{tv4_end_hour}:{tv4_end_min:02d}"
+
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #ef5350 0%, #e57373 100%); 
+                    padding: 0.8rem 1.5rem; 
+                    border-radius: 12px; 
+                    text-align: center;
+                    margin: 1rem 0;'>
+            <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
+                📌 {toku_visit4_weekday} {toku_visit4_time}
+            </p>
+            <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
+                👤 担当: {toku_visit4_staff}
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        # 訪問日4が無効の場合のダミー値
+        toku_visit4_weekday = None
+        toku_visit4_time = None
+        toku_visit4_staff = None
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 訪問日5（週5回の場合のみ表示）
+    if toku_visit_count >= 5:
+        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 訪問日 5</p>", unsafe_allow_html=True)
+
+        col_tv5_day, col_tv5_time = st.columns([1, 2])
+
+        with col_tv5_day:
+            toku_visit5_weekday = st.selectbox(
+                "曜日",
+                options=['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'],
+                index=3,  # デフォルト: 木曜日
+                key="toku_visit5_weekday"
+            )
+
+        with col_tv5_time:
+            tv5_col1, tv5_col2, tv5_col3 = st.columns(3)
+            
+            with tv5_col1:
+                toku_visit5_start_hour = st.selectbox(
+                    "開始時",
+                    options=list(range(9, 18)),
+                    index=2,  # デフォルト: 11時
+                    format_func=lambda x: f"{x}時",
+                    key="toku_visit5_start_hour"
+                )
+            
+            with tv5_col2:
+                toku_visit5_start_min = st.selectbox(
+                    "開始分",
+                    options=list(range(0, 60, 5)),
+                    index=0,  # デフォルト: 00分
+                    format_func=lambda x: f"{x:02d}分",
+                    key="toku_visit5_start_min"
+                )
+            
+            with tv5_col3:
+                toku_visit5_duration = st.selectbox(
+                    "訪問時間",
+                    options=[40, 60],
+                    index=0,  # デフォルト: 40分
+                    format_func=lambda x: f"{x}分",
+                    key="toku_visit5_duration"
+                )
+
+        # 訪問日5の担当スタッフ選択
+        st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
+        
+        if staff_list:
+            toku_visit5_staff = st.selectbox(
+                "担当スタッフを選択",
+                options=staff_list,
+                index=0,
+                key="toku_visit5_staff",
+                label_visibility="collapsed"
+            )
+        else:
+            st.info("💡 スタッフ設定でスタッフ名を入力してください")
+            toku_visit5_staff = "未設定"
+
+        # 訪問日5の終了時刻計算
+        tv5_end_total = toku_visit5_start_hour * 60 + toku_visit5_start_min + toku_visit5_duration
+        tv5_end_hour = tv5_end_total // 60
+        tv5_end_min = tv5_end_total % 60
+        toku_visit5_time = f"{toku_visit5_start_hour}:{toku_visit5_start_min:02d}-{tv5_end_hour}:{tv5_end_min:02d}"
+
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #ef5350 0%, #e57373 100%); 
+                    padding: 0.8rem 1.5rem; 
+                    border-radius: 12px; 
+                    text-align: center;
+                    margin: 1rem 0;'>
+            <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
+                📌 {toku_visit5_weekday} {toku_visit5_time}
+            </p>
+            <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
+                👤 担当: {toku_visit5_staff}
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        # 訪問日5が無効の場合のダミー値
+        toku_visit5_weekday = None
+        toku_visit5_time = None
+        toku_visit5_staff = None
     
     # 通常モード用のダミー値を設定
     visit_count = 0
@@ -1430,23 +1649,44 @@ def create_pdf(year, month, transfers_list, visit1_config, visit2_config=None, v
     return pdf_buffer, visit1_actual_days, visit2_actual_days, visit3_actual_days, canceled_dates
 
 # 特指示モード用PDF作成関数
-def create_toku_pdf(year, month, start_day, end_day, pattern, time1, staff1, time2=None, staff2=None):
+def create_toku_pdf(year, month, start_day, end_day, visit_configs):
     """
     特別訪問看護指示書用のPDF作成
+    visit_configs = [
+        {'weekday': '月曜日', 'time': '11:20-12:00', 'staff': '田中太郎'},
+        {'weekday': '水曜日', 'time': '11:00-11:40', 'staff': '佐藤花子'},
+        ...
+    ]
     """
     calendar.setfirstweekday(6)  # 日曜始まり
     cal = calendar.monthcalendar(year, month)
     
-    # 訪問日リストを作成
-    visit_days = list(range(start_day, end_day + 1))
+    # 曜日マップ
+    weekday_map = {
+        '月曜日': 0, '火曜日': 1, '水曜日': 2,
+        '木曜日': 3, '金曜日': 4, '土曜日': 5, '日曜日': 6
+    }
     
-    # パターンによって除外日を設定
-    if pattern == "週6日（日曜休み）":
-        # 日曜日を除外
-        visit_days = [d for d in visit_days if calendar.weekday(year, month, d) != 6]
-    elif pattern == "週6日（土曜休み）":
-        # 土曜日を除外
-        visit_days = [d for d in visit_days if calendar.weekday(year, month, d) != 5]
+    # 期間内の全日付
+    period_days = list(range(start_day, end_day + 1))
+    
+    # 各訪問日の曜日に該当する日付を収集
+    visit_schedule = {}  # {day: [(time, staff), ...]}
+    
+    for config in visit_configs:
+        if config is None:
+            continue
+        weekday = config['weekday']
+        time = config['time']
+        staff = config['staff']
+        target_weekday = weekday_map[weekday]
+        
+        # 期間内でその曜日に該当する日を探す
+        for day in period_days:
+            if calendar.weekday(year, month, day) == target_weekday:
+                if day not in visit_schedule:
+                    visit_schedule[day] = []
+                visit_schedule[day].append((time, staff))
     
     pdf_buffer = io.BytesIO()
     
@@ -1468,29 +1708,17 @@ def create_toku_pdf(year, month, start_day, end_day, pattern, time1, staff1, tim
         ax.text(0.4, len(cal) + 1.95, f"{month}月{start_day}日 〜 {month}月{end_day}日（{days_count}日間）", 
                ha='left', va='center', fontsize=11, color='red')
         
-        # 訪問パターンの表示
+        # 訪問内容の表示
         y_visit_info = len(cal) + 1.65
         ax.text(0.2, y_visit_info, "【訪問内容】", ha='left', va='center',
                fontsize=12, fontweight='bold', color='red')
         
         y_visit_info -= 0.3
-        if time2:
-            # 毎日2回
-            ax.text(0.4, y_visit_info, f"・1回目：{time1}（{staff1}）", 
-                   ha='left', va='center', fontsize=11, color='red')
-            y_visit_info -= 0.25
-            ax.text(0.4, y_visit_info, f"・2回目：{time2}（{staff2}）", 
-                   ha='left', va='center', fontsize=11, color='red')
-        else:
-            # 毎日1回
-            ax.text(0.4, y_visit_info, f"・{time1}（{staff1}）", 
-                   ha='left', va='center', fontsize=11, color='red')
-        
-        y_visit_info -= 0.3
-        pattern_text = pattern.replace("毎日", "").replace("1回", "").replace("2回", "")
-        if pattern_text:
-            ax.text(0.4, y_visit_info, f"・{pattern}", 
-                   ha='left', va='center', fontsize=11, color='red')
+        for config in visit_configs:
+            if config:
+                ax.text(0.4, y_visit_info, f"・{config['weekday']}：{config['time']}（{config['staff']}）", 
+                       ha='left', va='center', fontsize=11, color='red')
+                y_visit_info -= 0.25
         
         # 曜日ヘッダー
         weekdays = ['日', '月', '火', '水', '木', '金', '土']
@@ -1520,17 +1748,22 @@ def create_toku_pdf(year, month, start_day, end_day, pattern, time1, staff1, tim
                            fontsize=13, fontweight='bold', color=text_color)
                     
                     # 特指示期間内の訪問日
-                    if day in visit_days:
-                        if time2:
-                            # 2回訪問
-                            visit_text = f"{time1}\n{staff1}\n\n{time2}\n{staff2}"
-                            ax.text(x + 0.5, y - 0.5, visit_text, ha='center', va='center',
-                                   fontsize=10, fontweight='bold', color='red')
-                        else:
+                    if day in visit_schedule:
+                        visits = visit_schedule[day]
+                        if len(visits) == 1:
                             # 1回訪問
-                            visit_text = f"{time1}\n{staff1}"
+                            time, staff = visits[0]
+                            visit_text = f"{time}\n{staff}"
                             ax.text(x + 0.5, y - 0.55, visit_text, ha='center', va='center',
                                    fontsize=12, fontweight='bold', color='red')
+                        else:
+                            # 複数回訪問
+                            visit_texts = []
+                            for time, staff in visits:
+                                visit_texts.append(f"{time}\n{staff}")
+                            visit_text = "\n\n".join(visit_texts)
+                            ax.text(x + 0.5, y - 0.5, visit_text, ha='center', va='center',
+                                   fontsize=10, fontweight='bold', color='red')
         
         # フッター
         ax.text(0.2, -0.5, "※ 特別訪問看護指示書に基づく訪問です。", 
@@ -1543,7 +1776,7 @@ def create_toku_pdf(year, month, start_day, end_day, pattern, time1, staff1, tim
         plt.close()
     
     pdf_buffer.seek(0)
-    return pdf_buffer, visit_days
+    return pdf_buffer, list(visit_schedule.keys())
 
 # PDF作成ボタン
 st.markdown("<br><br>", unsafe_allow_html=True)
@@ -1607,28 +1840,60 @@ if st.button("📥 PDFを作成", use_container_width=True, type="primary"):
         
         else:
             # 特指示モードのPDF作成
-            if toku_pattern == "毎日2回":
-                pdf_buffer, visit_days = create_toku_pdf(
-                    year, month, toku_start_day, toku_end_day, toku_pattern,
-                    toku1_time, toku1_staff, toku2_time, toku2_staff
-                )
-            else:
-                pdf_buffer, visit_days = create_toku_pdf(
-                    year, month, toku_start_day, toku_end_day, toku_pattern,
-                    toku1_time, toku1_staff
-                )
+            # 訪問設定リストを作成
+            visit_configs = []
+            
+            # 訪問日1
+            visit_configs.append({
+                'weekday': toku_visit1_weekday,
+                'time': toku_visit1_time,
+                'staff': toku_visit1_staff
+            })
+            
+            # 訪問日2
+            if toku_visit_count >= 2:
+                visit_configs.append({
+                    'weekday': toku_visit2_weekday,
+                    'time': toku_visit2_time,
+                    'staff': toku_visit2_staff
+                })
+            
+            # 訪問日3
+            if toku_visit_count >= 3:
+                visit_configs.append({
+                    'weekday': toku_visit3_weekday,
+                    'time': toku_visit3_time,
+                    'staff': toku_visit3_staff
+                })
+            
+            # 訪問日4
+            if toku_visit_count >= 4:
+                visit_configs.append({
+                    'weekday': toku_visit4_weekday,
+                    'time': toku_visit4_time,
+                    'staff': toku_visit4_staff
+                })
+            
+            # 訪問日5
+            if toku_visit_count >= 5:
+                visit_configs.append({
+                    'weekday': toku_visit5_weekday,
+                    'time': toku_visit5_time,
+                    'staff': toku_visit5_staff
+                })
+            
+            pdf_buffer, visit_days = create_toku_pdf(
+                year, month, toku_start_day, toku_end_day, visit_configs
+            )
             
             st.success("✅ PDFが完成しました！")
             
             with st.expander("📋 作成内容を確認"):
                 st.write(f"**期間:** {month}月{toku_start_day}日 〜 {month}月{toku_end_day}日")
-                st.write(f"**訪問パターン:** {toku_pattern}")
+                st.write(f"**週の訪問回数:** 週{toku_visit_count}回")
                 st.write(f"**訪問日:** {visit_days}")
-                if toku_pattern == "毎日2回":
-                    st.write(f"**1回目:** {toku1_time}（{toku1_staff}）")
-                    st.write(f"**2回目:** {toku2_time}（{toku2_staff}）")
-                else:
-                    st.write(f"**訪問時間:** {toku1_time}（{toku1_staff}）")
+                for i, config in enumerate(visit_configs, 1):
+                    st.write(f"**訪問日{i}:** {config['weekday']} {config['time']}（{config['staff']}）")
             
             st.download_button(
                 label="📥 PDFをダウンロード",
@@ -1660,7 +1925,8 @@ with st.expander("💡 使い方ガイド"):
     **特指示モード:**
     - 特別訪問看護指示書に基づく訪問
     - 最大14日間の集中的な訪問
-    - 毎日1回、毎日2回、週6日から選択
+    - 週1〜5回まで柔軟に設定可能
+    - 各訪問日の曜日・時間・スタッフを個別設定
     - キャンセル・振替機能なし
     
     ### 👥 スタッフ設定
@@ -1679,12 +1945,12 @@ with st.expander("💡 使い方ガイド"):
     
     ### 🏥 特指示モード設定
     - **期間設定**: 開始日と終了日を選択（最大14日間）
-    - **訪問パターン**:
-      - 毎日1回: 期間中毎日訪問
-      - 毎日2回: 期間中毎日2回訪問
-      - 週6日（日曜休み）: 日曜以外訪問
-      - 週6日（土曜休み）: 土曜以外訪問
-    - **訪問時間**: 開始時刻と訪問時間を設定
+    - **訪問回数**: 週1〜5回を選択
+    - **各訪問日の設定**:
+      - 曜日: 月〜金から選択
+      - 時間: 開始時刻と訪問時間を設定
+      - スタッフ: 担当スタッフを選択
+    - **柔軟な設定**: 週1回から毎日（週5回）まで対応
     - **担当スタッフ**: 訪問ごとにスタッフを選択
     
     ### 🔄 キャンセル・振替設定（通常モードのみ）
@@ -1710,7 +1976,7 @@ st.markdown("""
             background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 100%);
             border-radius: 16px;'>
     <p style='color: #7f8c8d; font-size: 0.95rem; font-weight: 600; margin: 0;'>
-        💡 通常モード：週1〜3回の定期訪問 | 特指示モード：集中訪問（最大14日間）
+        💡 通常モード：週1〜3回の定期訪問 | 特指示モード：週1〜5回の集中訪問（最大14日間）
     </p>
     <p style='color: #95a5a6; font-size: 0.85rem; margin: 0.8rem 0 0 0;'>
         Created with ❤️ by Claude
