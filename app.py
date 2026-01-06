@@ -363,35 +363,35 @@ if mode == "通常モード":
             key="visit1_weekday"
         )
 
-with col_v1_time:
-    v1_col1, v1_col2, v1_col3 = st.columns(3)
-    
-    with v1_col1:
-        visit1_start_hour = st.selectbox(
-            "開始時",
-            options=list(range(9, 18)),
-            index=2,  # デフォルト: 11時
-            format_func=lambda x: f"{x}時",
-            key="visit1_start_hour"
-        )
-    
-    with v1_col2:
-        visit1_start_min = st.selectbox(
-            "開始分",
-            options=list(range(0, 60, 5)),
-            index=4,  # デフォルト: 20分
-            format_func=lambda x: f"{x:02d}分",
-            key="visit1_start_min"
-        )
-    
-    with v1_col3:
-        visit1_duration = st.selectbox(
-            "訪問時間",
-            options=[40, 60],
-            index=0,  # デフォルト: 40分
-            format_func=lambda x: f"{x}分",
-            key="visit1_duration"
-        )
+    with col_v1_time:
+        v1_col1, v1_col2, v1_col3 = st.columns(3)
+        
+        with v1_col1:
+            visit1_start_hour = st.selectbox(
+                "開始時",
+                options=list(range(9, 18)),
+                index=2,  # デフォルト: 11時
+                format_func=lambda x: f"{x}時",
+                key="visit1_start_hour"
+            )
+        
+        with v1_col2:
+            visit1_start_min = st.selectbox(
+                "開始分",
+                options=list(range(0, 60, 5)),
+                index=4,  # デフォルト: 20分
+                format_func=lambda x: f"{x:02d}分",
+                key="visit1_start_min"
+            )
+        
+        with v1_col3:
+            visit1_duration = st.selectbox(
+                "訪問時間",
+                options=[40, 60],
+                index=0,  # デフォルト: 40分
+                format_func=lambda x: f"{x}分",
+                key="visit1_duration"
+            )
 
     # 訪問日1の担当スタッフ選択
     st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
