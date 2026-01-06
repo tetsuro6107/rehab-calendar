@@ -576,6 +576,56 @@ st.markdown("---")
 # キャンセル・振替設定セクション
 st.header("📅 キャンセル・振替設定")
 
+# 関数定義
+def get_visit_days(year, month, weekday_name):
+    """指定した曜日の日付リストを取得"""
+    weekday_map = {
+        '月曜日': 1, '火曜日': 2, '水曜日': 3,
+        '木曜日': 4, '金曜日': 5
+    }
+    
+    weekday_num = weekday_map[weekday_name]
+    
+    calendar.setfirstweekday(6)  # 日曜始まり
+    cal = calendar.monthcalendar(year, month)
+    days = []
+    
+    for week in cal:
+        if week[weekday_num] != 0:
+            days.append(week[weekday_num])
+    
+    return sorted(days)
+
+def get_weekdays_in_same_week(year, month, day):
+    from datetime import date, timedelta
+    
+    target_date = date(year, month, day)
+    weekday = target_date.weekday()
+    monday = target_date - timedelta(days=weekday)
+    
+    weekdays = []
+    for i in range(5):
+        d = monday + timedelta(days=i)
+        if d.month == month and d.day != day:
+            weekdays.append(d.day)
+    
+    return sorted(weekdays)
+
+# 定期訪問日1の日付を取得
+visit1_days = get_visit_days(year, month, visit1_weekday)
+
+# 訪問回数に応じて訪問日を追加
+if visit_count >= 2:
+    visit2_days = get_visit_days(year, month, visit2_weekday)
+else:
+    visit2_days = []
+
+# 週3回の場合は訪問日3も追加
+if visit_count >= 3:
+    visit3_days = get_visit_days(year, month, visit3_weekday)
+else:
+    visit3_days = []
+
 # その月のカレンダーを表示
 st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin:1.5rem 0 1rem 0;'>📆 今月のカレンダー</p>", unsafe_allow_html=True)
 
@@ -635,58 +685,14 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 関数定義
-def get_visit_days(year, month, weekday_name):
-    """指定した曜日の日付リストを取得"""
-    weekday_map = {
-        '月曜日': 1, '火曜日': 2, '水曜日': 3,
-        '木曜日': 4, '金曜日': 5
-    }
-    
-    weekday_num = weekday_map[weekday_name]
-    
-    calendar.setfirstweekday(6)  # 日曜始まり
-    cal = calendar.monthcalendar(year, month)
-    days = []
-    
-    for week in cal:
-        if week[weekday_num] != 0:
-            days.append(week[weekday_num])
-    
-    return sorted(days)
-
-def get_weekdays_in_same_week(year, month, day):
-    from datetime import date, timedelta
-    
-    target_date = date(year, month, day)
-    weekday = target_date.weekday()
-    monday = target_date - timedelta(days=weekday)
-    
-    weekdays = []
-    for i in range(5):
-        d = monday + timedelta(days=i)
-        if d.month == month and d.day != day:
-            weekdays.append(d.day)
-    
-    return sorted(weekdays)
-
-# 定期訪問日1の日付を取得
-visit1_days = get_visit_days(year, month, visit1_weekday)
-
-# 訪問回数に応じて訪問日を追加
+# transfer_optionsを計算
 if visit_count >= 2:
-    visit2_days = get_visit_days(year, month, visit2_weekday)
     transfer_options = sorted(visit1_days + visit2_days)
 else:
-    visit2_days = []
     transfer_options = sorted(visit1_days)
 
-# 週3回の場合は訪問日3も追加
 if visit_count >= 3:
-    visit3_days = get_visit_days(year, month, visit3_weekday)
     transfer_options = sorted(visit1_days + visit2_days + visit3_days)
-else:
-    visit3_days = []
 
 # グリッドレイアウト
 col1, col2 = st.columns([1, 1])
@@ -749,31 +755,31 @@ if transfer_from and transfer_to is not None:
     time_col1, time_col2, time_col3 = st.columns(3)
     
     with time_col1:
-    start_hour = st.selectbox(
-        "開始時",
-        options=list(range(9, 18)),
-        index=2,
-        format_func=lambda x: f"{x}時",
-        key="start_hour"
-    )
+        start_hour = st.selectbox(
+            "開始時",
+            options=list(range(9, 18)),
+            index=2,
+            format_func=lambda x: f"{x}時",
+            key="start_hour"
+        )
 
-with time_col2:
-    start_min = st.selectbox(
-        "開始分",
-        options=list(range(0, 60, 5)),
-        index=4,
-        format_func=lambda x: f"{x:02d}分",
-        key="start_min"
-    )
+    with time_col2:
+        start_min = st.selectbox(
+            "開始分",
+            options=list(range(0, 60, 5)),
+            index=4,
+            format_func=lambda x: f"{x:02d}分",
+            key="start_min"
+        )
 
-with time_col3:
-    duration = st.selectbox(
-        "訪問時間",
-        options=[40, 60],
-        index=0,
-        format_func=lambda x: f"{x}分",
-        key="duration"
-    )
+    with time_col3:
+        duration = st.selectbox(
+            "訪問時間",
+            options=[40, 60],
+            index=0,
+            format_func=lambda x: f"{x}分",
+            key="duration"
+        )
 
     # 終了時刻計算
     start_total_min = start_hour * 60 + start_min
