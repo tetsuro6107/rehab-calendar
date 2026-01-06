@@ -339,29 +339,29 @@ if mode == "通常モード":
     # 訪問回数選択
     st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.15rem; margin-bottom:1rem;'>📊 週の訪問回数</p>", unsafe_allow_html=True)
 
-visit_count = st.selectbox(
-    "訪問回数を選択",
-    options=[1, 2, 3],
-    format_func=lambda x: f"週{x}回",
-    index=1,  # デフォルト: 週2回
-    key="visit_count",
-    label_visibility="collapsed"
-)
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# 訪問日1
-st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 定期訪問日 1</p>", unsafe_allow_html=True)
-
-col_v1_day, col_v1_time = st.columns([1, 2])
-
-with col_v1_day:
-    visit1_weekday = st.selectbox(
-        "曜日",
-        options=['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'],
-        index=0,  # デフォルト: 月曜日
-        key="visit1_weekday"
+    visit_count = st.selectbox(
+        "訪問回数を選択",
+        options=[1, 2, 3],
+        format_func=lambda x: f"週{x}回",
+        index=1,  # デフォルト: 週2回
+        key="visit_count",
+        label_visibility="collapsed"
     )
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 訪問日1
+    st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 定期訪問日 1</p>", unsafe_allow_html=True)
+
+    col_v1_day, col_v1_time = st.columns([1, 2])
+
+    with col_v1_day:
+        visit1_weekday = st.selectbox(
+            "曜日",
+            options=['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'],
+            index=0,  # デフォルト: 月曜日
+            key="visit1_weekday"
+        )
 
 with col_v1_time:
     v1_col1, v1_col2, v1_col3 = st.columns(3)
@@ -393,109 +393,27 @@ with col_v1_time:
             key="visit1_duration"
         )
 
-# 訪問日1の担当スタッフ選択
-st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
-
-if staff_list:
-    visit1_staff = st.selectbox(
-        "担当スタッフを選択",
-        options=staff_list,
-        index=0,
-        key="visit1_staff",
-        label_visibility="collapsed"
-    )
-else:
-    st.info("💡 スタッフ設定でスタッフ名を入力してください")
-    visit1_staff = "未設定"
-
-# 訪問日1の終了時刻計算
-v1_end_total = visit1_start_hour * 60 + visit1_start_min + visit1_duration
-v1_end_hour = v1_end_total // 60
-v1_end_min = v1_end_total % 60
-visit1_time = f"{visit1_start_hour}:{visit1_start_min:02d}-{v1_end_hour}:{v1_end_min:02d}"
-
-st.markdown(f"""
-<div style='background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%); 
-            padding: 0.8rem 1.5rem; 
-            border-radius: 12px; 
-            text-align: center;
-            margin: 1rem 0;'>
-    <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
-        📌 {visit1_weekday} {visit1_time}
-    </p>
-    <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
-        👤 担当: {visit1_staff}
-    </p>
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# 訪問日2（週2回以上の場合のみ表示）
-if visit_count >= 2:
-    st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 定期訪問日 2</p>", unsafe_allow_html=True)
-
-    col_v2_day, col_v2_time = st.columns([1, 2])
-
-    with col_v2_day:
-        visit2_weekday = st.selectbox(
-            "曜日",
-            options=['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'],
-            index=2,  # デフォルト: 水曜日
-            key="visit2_weekday"
-        )
-
-    with col_v2_time:
-        v2_col1, v2_col2, v2_col3 = st.columns(3)
-        
-        with v2_col1:
-            visit2_start_hour = st.selectbox(
-                "開始時",
-                options=list(range(9, 18)),
-                index=2,  # デフォルト: 11時
-                format_func=lambda x: f"{x}時",
-                key="visit2_start_hour"
-            )
-        
-        with v2_col2:
-            visit2_start_min = st.selectbox(
-                "開始分",
-                options=list(range(0, 60, 5)),
-                index=0,  # デフォルト: 00分
-                format_func=lambda x: f"{x:02d}分",
-                key="visit2_start_min"
-            )
-        
-        with v2_col3:
-            visit2_duration = st.selectbox(
-                "訪問時間",
-                options=[40, 60],
-                index=0,  # デフォルト: 40分
-                format_func=lambda x: f"{x}分",
-                key="visit2_duration"
-            )
-
-    # 訪問日2の担当スタッフ選択
+    # 訪問日1の担当スタッフ選択
     st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
     
     if staff_list:
-        visit2_staff = st.selectbox(
+        visit1_staff = st.selectbox(
             "担当スタッフを選択",
             options=staff_list,
-            index=min(1, len(staff_list)-1) if len(staff_list) > 1 else 0,
-            key="visit2_staff",
+            index=0,
+            key="visit1_staff",
             label_visibility="collapsed"
         )
     else:
         st.info("💡 スタッフ設定でスタッフ名を入力してください")
-        visit2_staff = "未設定"
-
-    # 訪問日2の終了時刻計算
-    v2_end_total = visit2_start_hour * 60 + visit2_start_min + visit2_duration
-    v2_end_hour = v2_end_total // 60
-    v2_end_min = v2_end_total % 60
-    visit2_time = f"{visit2_start_hour}:{visit2_start_min:02d}-{v2_end_hour}:{v2_end_min:02d}"
-
+        visit1_staff = "未設定"
+    
+    # 訪問日1の終了時刻計算
+    v1_end_total = visit1_start_hour * 60 + visit1_start_min + visit1_duration
+    v1_end_hour = v1_end_total // 60
+    v1_end_min = v1_end_total % 60
+    visit1_time = f"{visit1_start_hour}:{visit1_start_min:02d}-{v1_end_hour}:{v1_end_min:02d}"
+    
     st.markdown(f"""
     <div style='background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%); 
                 padding: 0.8rem 1.5rem; 
@@ -503,112 +421,194 @@ if visit_count >= 2:
                 text-align: center;
                 margin: 1rem 0;'>
         <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
-            📌 {visit2_weekday} {visit2_time}
+            📌 {visit1_weekday} {visit1_time}
         </p>
         <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
-            👤 担当: {visit2_staff}
+            👤 担当: {visit1_staff}
         </p>
     </div>
     """, unsafe_allow_html=True)
-else:
-    # 週1回の場合はダミー値
-    visit2_weekday = None
-    visit2_time = None
-    visit2_start_hour = None
-    visit2_start_min = None
-    visit2_duration = None
-    visit2_staff = None
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# 訪問日3（週3回の場合のみ表示）
-if visit_count >= 3:
-    st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 定期訪問日 3</p>", unsafe_allow_html=True)
-
-    col_v3_day, col_v3_time = st.columns([1, 2])
-
-    with col_v3_day:
-        visit3_weekday = st.selectbox(
-            "曜日",
-            options=['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'],
-            index=4,  # デフォルト: 金曜日
-            key="visit3_weekday"
-        )
-
-    with col_v3_time:
-        v3_col1, v3_col2, v3_col3 = st.columns(3)
-        
-        with v3_col1:
-            visit3_start_hour = st.selectbox(
-                "開始時",
-                options=list(range(9, 18)),
-                index=2,  # デフォルト: 11時
-                format_func=lambda x: f"{x}時",
-                key="visit3_start_hour"
-            )
-        
-        with v3_col2:
-            visit3_start_min = st.selectbox(
-                "開始分",
-                options=list(range(0, 60, 5)),
-                index=0,  # デフォルト: 00分
-                format_func=lambda x: f"{x:02d}分",
-                key="visit3_start_min"
-            )
-        
-        with v3_col3:
-            visit3_duration = st.selectbox(
-                "訪問時間",
-                options=[40, 60],
-                index=0,  # デフォルト: 40分
-                format_func=lambda x: f"{x}分",
-                key="visit3_duration"
-            )
-
-    # 訪問日3の担当スタッフ選択
-    st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
     
-    if staff_list:
-        visit3_staff = st.selectbox(
-            "担当スタッフを選択",
-            options=staff_list,
-            index=min(2, len(staff_list)-1) if len(staff_list) > 2 else 0,
-            key="visit3_staff",
-            label_visibility="collapsed"
-        )
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # 訪問日2（週2回以上の場合のみ表示）
+    if visit_count >= 2:
+        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 定期訪問日 2</p>", unsafe_allow_html=True)
+    
+        col_v2_day, col_v2_time = st.columns([1, 2])
+    
+        with col_v2_day:
+            visit2_weekday = st.selectbox(
+                "曜日",
+                options=['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'],
+                index=2,  # デフォルト: 水曜日
+                key="visit2_weekday"
+            )
+    
+        with col_v2_time:
+            v2_col1, v2_col2, v2_col3 = st.columns(3)
+            
+            with v2_col1:
+                visit2_start_hour = st.selectbox(
+                    "開始時",
+                    options=list(range(9, 18)),
+                    index=2,  # デフォルト: 11時
+                    format_func=lambda x: f"{x}時",
+                    key="visit2_start_hour"
+                )
+            
+            with v2_col2:
+                visit2_start_min = st.selectbox(
+                    "開始分",
+                    options=list(range(0, 60, 5)),
+                    index=0,  # デフォルト: 00分
+                    format_func=lambda x: f"{x:02d}分",
+                    key="visit2_start_min"
+                )
+            
+            with v2_col3:
+                visit2_duration = st.selectbox(
+                    "訪問時間",
+                    options=[40, 60],
+                    index=0,  # デフォルト: 40分
+                    format_func=lambda x: f"{x}分",
+                    key="visit2_duration"
+                )
+    
+        # 訪問日2の担当スタッフ選択
+        st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
+        
+        if staff_list:
+            visit2_staff = st.selectbox(
+                "担当スタッフを選択",
+                options=staff_list,
+                index=min(1, len(staff_list)-1) if len(staff_list) > 1 else 0,
+                key="visit2_staff",
+                label_visibility="collapsed"
+            )
+        else:
+            st.info("💡 スタッフ設定でスタッフ名を入力してください")
+            visit2_staff = "未設定"
+    
+        # 訪問日2の終了時刻計算
+        v2_end_total = visit2_start_hour * 60 + visit2_start_min + visit2_duration
+        v2_end_hour = v2_end_total // 60
+        v2_end_min = v2_end_total % 60
+        visit2_time = f"{visit2_start_hour}:{visit2_start_min:02d}-{v2_end_hour}:{v2_end_min:02d}"
+    
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%); 
+                    padding: 0.8rem 1.5rem; 
+                    border-radius: 12px; 
+                    text-align: center;
+                    margin: 1rem 0;'>
+            <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
+                📌 {visit2_weekday} {visit2_time}
+            </p>
+            <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
+                👤 担当: {visit2_staff}
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
     else:
-        st.info("💡 スタッフ設定でスタッフ名を入力してください")
-        visit3_staff = "未設定"
-
-    # 訪問日3の終了時刻計算
-    v3_end_total = visit3_start_hour * 60 + visit3_start_min + visit3_duration
-    v3_end_hour = v3_end_total // 60
-    v3_end_min = v3_end_total % 60
-    visit3_time = f"{visit3_start_hour}:{visit3_start_min:02d}-{v3_end_hour}:{v3_end_min:02d}"
-
-    st.markdown(f"""
-    <div style='background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%); 
-                padding: 0.8rem 1.5rem; 
-                border-radius: 12px; 
-                text-align: center;
-                margin: 1rem 0;'>
-        <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
-            📌 {visit3_weekday} {visit3_time}
-        </p>
-        <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
-            👤 担当: {visit3_staff}
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-else:
-    # 訪問日3が無効の場合のダミー値
-    visit3_weekday = None
-    visit3_time = None
-    visit3_start_hour = None
-    visit3_start_min = None
-    visit3_duration = None
-    visit3_staff = None
-
+        # 週1回の場合はダミー値
+        visit2_weekday = None
+        visit2_time = None
+        visit2_start_hour = None
+        visit2_start_min = None
+        visit2_duration = None
+        visit2_staff = None
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # 訪問日3（週3回の場合のみ表示）
+    if visit_count >= 3:
+        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:0.5rem;'>🔹 定期訪問日 3</p>", unsafe_allow_html=True)
+    
+        col_v3_day, col_v3_time = st.columns([1, 2])
+    
+        with col_v3_day:
+            visit3_weekday = st.selectbox(
+                "曜日",
+                options=['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'],
+                index=4,  # デフォルト: 金曜日
+                key="visit3_weekday"
+            )
+    
+        with col_v3_time:
+            v3_col1, v3_col2, v3_col3 = st.columns(3)
+            
+            with v3_col1:
+                visit3_start_hour = st.selectbox(
+                    "開始時",
+                    options=list(range(9, 18)),
+                    index=2,  # デフォルト: 11時
+                    format_func=lambda x: f"{x}時",
+                    key="visit3_start_hour"
+                )
+            
+            with v3_col2:
+                visit3_start_min = st.selectbox(
+                    "開始分",
+                    options=list(range(0, 60, 5)),
+                    index=0,  # デフォルト: 00分
+                    format_func=lambda x: f"{x:02d}分",
+                    key="visit3_start_min"
+                )
+            
+            with v3_col3:
+                visit3_duration = st.selectbox(
+                    "訪問時間",
+                    options=[40, 60],
+                    index=0,  # デフォルト: 40分
+                    format_func=lambda x: f"{x}分",
+                    key="visit3_duration"
+                )
+    
+        # 訪問日3の担当スタッフ選択
+        st.markdown("<p style='font-weight:600; color:#2c3e50; font-size:0.95rem; margin:0.8rem 0 0.3rem 0;'>👤 担当スタッフ</p>", unsafe_allow_html=True)
+        
+        if staff_list:
+            visit3_staff = st.selectbox(
+                "担当スタッフを選択",
+                options=staff_list,
+                index=min(2, len(staff_list)-1) if len(staff_list) > 2 else 0,
+                key="visit3_staff",
+                label_visibility="collapsed"
+            )
+        else:
+            st.info("💡 スタッフ設定でスタッフ名を入力してください")
+            visit3_staff = "未設定"
+    
+        # 訪問日3の終了時刻計算
+        v3_end_total = visit3_start_hour * 60 + visit3_start_min + visit3_duration
+        v3_end_hour = v3_end_total // 60
+        v3_end_min = v3_end_total % 60
+        visit3_time = f"{visit3_start_hour}:{visit3_start_min:02d}-{v3_end_hour}:{v3_end_min:02d}"
+    
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%); 
+                    padding: 0.8rem 1.5rem; 
+                    border-radius: 12px; 
+                    text-align: center;
+                    margin: 1rem 0;'>
+            <p style='color: white; font-size: 1.1rem; font-weight: 700; margin: 0;'>
+                📌 {visit3_weekday} {visit3_time}
+            </p>
+            <p style='color: rgba(255,255,255,0.95); font-size: 0.95rem; font-weight: 600; margin: 0.3rem 0 0 0;'>
+                👤 担当: {visit3_staff}
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        # 訪問日3が無効の場合のダミー値
+        visit3_weekday = None
+        visit3_time = None
+        visit3_start_hour = None
+        visit3_start_min = None
+        visit3_duration = None
+        visit3_staff = None
+    
 # 特指示モードの設定
 if mode == "特指示モード":
     # 特指示モード設定セクション
@@ -1137,10 +1137,6 @@ if mode == "特指示モード":
     visit3_staff = None
 
 st.markdown("---")
-
-# キャンセル・振替設定セクション（通常モードのみ）
-if mode == "通常モード":
-    st.header("📅 キャンセル・振替設定")
 
 # 関数定義
 def get_visit_days(year, month, weekday_name):
