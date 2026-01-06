@@ -958,88 +958,101 @@ def get_weekdays_in_same_week(year, month, day):
     
     return sorted(weekdays)
 
-# 定期訪問日1の日付を取得
-visit1_days = get_visit_days(year, month, visit1_weekday)
-
-# 訪問回数に応じて訪問日を追加
-if visit_count >= 2:
-    visit2_days = get_visit_days(year, month, visit2_weekday)
+# 通常モードの場合のみ訪問日を計算
+if mode == "通常モード":
+    # 定期訪問日1の日付を取得
+    visit1_days = get_visit_days(year, month, visit1_weekday)
+    
+    # 訪問回数に応じて訪問日を追加
+    if visit_count >= 2:
+        visit2_days = get_visit_days(year, month, visit2_weekday)
+    else:
+        visit2_days = []
+    
+    # 週3回の場合は訪問日3も追加
+    if visit_count >= 3:
+        visit3_days = get_visit_days(year, month, visit3_weekday)
+    else:
+        visit3_days = []
 else:
+    # 特指示モードの場合はダミー値
+    visit1_days = []
     visit2_days = []
-
-# 週3回の場合は訪問日3も追加
-if visit_count >= 3:
-    visit3_days = get_visit_days(year, month, visit3_weekday)
-else:
     visit3_days = []
 
-# その月のカレンダーを表示
-st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin:1.5rem 0 1rem 0;'>📆 今月のカレンダー</p>", unsafe_allow_html=True)
+st.markdown("---")
 
-import calendar as cal_module
-cal_module.setfirstweekday(6)  # 日曜始まり
-month_calendar = cal_module.monthcalendar(year, month)
+# キャンセル・振替設定セクション（通常モードのみ）
+if mode == "通常モード":
+    st.header("📅 キャンセル・振替設定")
 
-# カレンダーのヘッダー
-calendar_header = "| 日 | 月 | 火 | 水 | 木 | 金 | 土 |"
-calendar_separator = "|:---:|:---:|:---:|:---:|:---:|:---:|:---:|"
+    # その月のカレンダーを表示
+    st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin:1.5rem 0 1rem 0;'>📆 今月のカレンダー</p>", unsafe_allow_html=True)
 
-# カレンダーの行を生成
-calendar_rows = []
-for week in month_calendar:
-    row = "|"
-    for i, day in enumerate(week):
-        if day == 0:
-            row += "   |"
-        else:
-            # 訪問日をマーク
-            is_visit_day = False
-            if day in visit1_days:
-                is_visit_day = True
-            elif visit_count >= 2 and day in visit2_days:
-                is_visit_day = True
-            elif visit_count >= 3 and day in visit3_days:
-                is_visit_day = True
-            
-            if is_visit_day:
-                row += f" **{day}** 🏥|"
-            elif i == 0:  # 日曜日
-                row += f" <span style='color:red'>{day}</span>|"
-            elif i == 6:  # 土曜日
-                row += f" <span style='color:blue'>{day}</span>|"
+    import calendar as cal_module
+    cal_module.setfirstweekday(6)  # 日曜始まり
+    month_calendar = cal_module.monthcalendar(year, month)
+
+    # カレンダーのヘッダー
+    calendar_header = "| 日 | 月 | 火 | 水 | 木 | 金 | 土 |"
+    calendar_separator = "|:---:|:---:|:---:|:---:|:---:|:---:|:---:|"
+
+    # カレンダーの行を生成
+    calendar_rows = []
+    for week in month_calendar:
+        row = "|"
+        for i, day in enumerate(week):
+            if day == 0:
+                row += "   |"
             else:
-                row += f" {day}|"
-    calendar_rows.append(row)
+                # 訪問日をマーク
+                is_visit_day = False
+                if day in visit1_days:
+                    is_visit_day = True
+                elif visit_count >= 2 and day in visit2_days:
+                    is_visit_day = True
+                elif visit_count >= 3 and day in visit3_days:
+                    is_visit_day = True
+                
+                if is_visit_day:
+                    row += f" **{day}** 🏥|"
+                elif i == 0:  # 日曜日
+                    row += f" <span style='color:red'>{day}</span>|"
+                elif i == 6:  # 土曜日
+                    row += f" <span style='color:blue'>{day}</span>|"
+                else:
+                    row += f" {day}|"
+        calendar_rows.append(row)
 
-calendar_md = calendar_header + "\n" + calendar_separator + "\n" + "\n".join(calendar_rows)
+    calendar_md = calendar_header + "\n" + calendar_separator + "\n" + "\n".join(calendar_rows)
 
-st.markdown(calendar_md, unsafe_allow_html=True)
-st.markdown("<p style='color: #7f8c8d; font-size: 0.85rem; margin: 0.5rem 0 1.5rem 0; text-align: center;'>🏥 = 定期訪問日</p>", unsafe_allow_html=True)
+    st.markdown(calendar_md, unsafe_allow_html=True)
+    st.markdown("<p style='color: #7f8c8d; font-size: 0.85rem; margin: 0.5rem 0 1.5rem 0; text-align: center;'>🏥 = 定期訪問日</p>", unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
 
-# 説明カード
-st.markdown("""
-<div style='background: linear-gradient(145deg, #e8f5e9 0%, #ffffff 100%);
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
-            margin: 2rem 0;
-            border: 1px solid rgba(76, 175, 80, 0.2);'>
-    <p style='color: #2e7d32; font-size: 0.95rem; font-weight: 600; margin: 0; text-align: center;'>
-        💡 振替先で「キャンセル」を選ぶと振替なしでお休みになります
-    </p>
-</div>
-""", unsafe_allow_html=True)
+    # 説明カード
+    st.markdown("""
+    <div style='background: linear-gradient(145deg, #e8f5e9 0%, #ffffff 100%);
+                padding: 2rem;
+                border-radius: 20px;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+                margin: 2rem 0;
+                border: 1px solid rgba(76, 175, 80, 0.2);'>
+        <p style='color: #2e7d32; font-size: 0.95rem; font-weight: 600; margin: 0; text-align: center;'>
+            💡 振替先で「キャンセル」を選ぶと振替なしでお休みになります
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-# transfer_optionsを計算
-if visit_count >= 2:
-    transfer_options = sorted(visit1_days + visit2_days)
-else:
-    transfer_options = sorted(visit1_days)
+    # transfer_optionsを計算
+    if visit_count >= 2:
+        transfer_options = sorted(visit1_days + visit2_days)
+    else:
+        transfer_options = sorted(visit1_days)
 
-if visit_count >= 3:
-    transfer_options = sorted(visit1_days + visit2_days + visit3_days)
+    if visit_count >= 3:
+        transfer_options = sorted(visit1_days + visit2_days + visit3_days)
 
 # グリッドレイアウト
 col1, col2 = st.columns([1, 1])
