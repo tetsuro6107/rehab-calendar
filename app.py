@@ -719,37 +719,31 @@ with col1:
 with col2:
     st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.5rem;'>振替先（平日）</p>", unsafe_allow_html=True)
     if transfer_from:
+        # 同じ週の平日を取得
         weekday_options = get_weekdays_in_same_week(year, month, transfer_from)
         
-        # 「キャンセル」オプションを追加
-        cancel_option = -1  # キャンセルを示す特別な値
-        all_options = [cancel_option] + weekday_options
+        # 表示用のオプションリストを作成（キャンセルを含む）
+        display_options = ["❌ キャンセル（振替なし）"]
+        for day in weekday_options:
+            weekday_name = ['月','火','水','木','金','土','日'][calendar.weekday(year, month, day)]
+            display_options.append(f"{day}日 ({weekday_name})")
         
-        def format_transfer_option(x):
-            if x == -1:
-                return "❌ キャンセル（振替なし）"
-            else:
-                return f"{x}日 ({['月','火','水','木','金','土','日'][calendar.weekday(year, month, x)]})"
+        # セレクトボックスで表示
+        selected_option = st.selectbox(
+            "振替先を選択",
+            options=display_options,
+            key="transfer_to_select",
+            label_visibility="collapsed"
+        )
         
-        if all_options:
-            transfer_to_selected = st.selectbox(
-                "振替先を選択",
-                options=all_options,
-                format_func=format_transfer_option,
-                key="transfer_to_select",
-                label_visibility="collapsed"
-            )
-            
-            # キャンセルが選択された場合はNone
-            if transfer_to_selected == -1:
-                transfer_to = None
-                is_cancel = True
-            else:
-                transfer_to = transfer_to_selected
-                is_cancel = False
-        else:
-            st.warning("⚠️ 振替可能な日がありません")
+        # 選択された値に応じて処理
+        if selected_option == "❌ キャンセル（振替なし）":
             transfer_to = None
+            is_cancel = True
+        else:
+            # 日付部分を抽出（例: "13日 (火)" → 13）
+            day_str = selected_option.split("日")[0]
+            transfer_to = int(day_str)
             is_cancel = False
     else:
         st.info("👆 まず振替元を選択してください")
