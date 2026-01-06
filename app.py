@@ -697,6 +697,11 @@ if visit_count >= 3:
 # グリッドレイアウト
 col1, col2 = st.columns([1, 1])
 
+# is_cancel変数を初期化
+is_cancel = False
+time_valid = True  # 初期値を設定
+transfer_time = ""  # 初期値を設定
+
 with col1:
     st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.5rem;'>振替元（訪問日）</p>", unsafe_allow_html=True)
     if transfer_options:
@@ -736,8 +741,12 @@ with col2:
             )
             
             # キャンセルが選択された場合はNone
-            transfer_to = None if transfer_to_selected == -1 else transfer_to_selected
-            is_cancel = (transfer_to_selected == -1)
+            if transfer_to_selected == -1:
+                transfer_to = None
+                is_cancel = True
+            else:
+                transfer_to = transfer_to_selected
+                is_cancel = False
         else:
             st.warning("⚠️ 振替可能な日がありません")
             transfer_to = None
@@ -748,7 +757,7 @@ with col2:
         is_cancel = False
 
 # 時間設定（キャンセルでない場合のみ表示）
-if transfer_from and transfer_to is not None:
+if transfer_from and not is_cancel:
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.8rem;'>⏰ 時間設定</p>", unsafe_allow_html=True)
     
@@ -823,6 +832,7 @@ else:
     transfer_time = ""
     time_valid = True
     if transfer_from and is_cancel:
+        st.markdown("<br>", unsafe_allow_html=True)
         st.info("ℹ️ キャンセルの場合は時間設定は不要です")
 
 st.markdown("<br>", unsafe_allow_html=True)
@@ -835,20 +845,25 @@ with col_btn1:
     if st.button(button_label, use_container_width=True, type="primary"):
         if transfer_from is None:
             st.error("❌ 振替元（訪問日）を選択してください")
-        elif transfer_to is None and not is_cancel:
-            st.error("❌ 振替先を選択してください")
-        elif transfer_to is not None and not time_valid:
-            st.error("❌ 終了時刻が定時を超えています")
-        else:
+        elif is_cancel:
+            # キャンセルの場合は即座に追加
             if any(t[0] == transfer_from for t in st.session_state.transfers):
                 st.warning("⚠️ この日付は既に登録されています")
             else:
-                # 振替またはキャンセルを追加
+                st.session_state.transfers.append((transfer_from, None, ""))
+                st.success(f"✅ {transfer_from}日をキャンセルしました")
+                st.rerun()
+        elif transfer_to is None:
+            st.error("❌ 振替先を選択してください")
+        elif not time_valid:
+            st.error("❌ 終了時刻が定時を超えています")
+        else:
+            # 振替の追加
+            if any(t[0] == transfer_from for t in st.session_state.transfers):
+                st.warning("⚠️ この日付は既に登録されています")
+            else:
                 st.session_state.transfers.append((transfer_from, transfer_to, transfer_time))
-                if is_cancel or transfer_to is None:
-                    st.success(f"✅ {transfer_from}日をキャンセルしました")
-                else:
-                    st.success(f"✅ {transfer_from}日 → {transfer_to}日を追加しました")
+                st.success(f"✅ {transfer_from}日 → {transfer_to}日を追加しました")
                 st.rerun()
 
 with col_btn2:
