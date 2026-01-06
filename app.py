@@ -1269,231 +1269,231 @@ if mode == "通常モード":
     if visit_count >= 3:
         transfer_options = sorted(visit1_days + visit2_days + visit3_days)
 
-# グリッドレイアウト
-col1, col2 = st.columns([1, 1])
+    # グリッドレイアウト
+    col1, col2 = st.columns([1, 1])
 
-# is_cancel変数を初期化
-is_cancel = False
-time_valid = True  # 初期値を設定
-transfer_time = ""  # 初期値を設定
+    # is_cancel変数を初期化
+    is_cancel = False
+    time_valid = True  # 初期値を設定
+    transfer_time = ""  # 初期値を設定
 
-with col1:
-    st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.5rem;'>振替元（訪問日）</p>", unsafe_allow_html=True)
-    if transfer_options:
-        transfer_from = st.selectbox(
-            "振替元を選択",
-            options=transfer_options,
-            format_func=lambda x: f"{x}日",
-            key="transfer_from_select",
-            label_visibility="collapsed"
-        )
-    else:
-        st.warning("⚠️ 訪問日がありません")
-        transfer_from = None
+    with col1:
+        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.5rem;'>振替元（訪問日）</p>", unsafe_allow_html=True)
+        if transfer_options:
+            transfer_from = st.selectbox(
+                "振替元を選択",
+                options=transfer_options,
+                format_func=lambda x: f"{x}日",
+                key="transfer_from_select",
+                label_visibility="collapsed"
+            )
+        else:
+            st.warning("⚠️ 訪問日がありません")
+            transfer_from = None
 
-with col2:
-    st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.5rem;'>振替先（平日）</p>", unsafe_allow_html=True)
-    if transfer_from:
-        # 同じ週の平日を取得
-        weekday_options = get_weekdays_in_same_week(year, month, transfer_from)
-        
-        # 表示用のオプションリストを作成（キャンセルを含む）
-        display_options = ["❌ キャンセル（振替なし）"]
-        for day in weekday_options:
-            weekday_name = ['月','火','水','木','金','土','日'][calendar.weekday(year, month, day)]
-            display_options.append(f"{day}日 ({weekday_name})")
-        
-        # セレクトボックスで表示
-        selected_option = st.selectbox(
-            "振替先を選択",
-            options=display_options,
-            key="transfer_to_select",
-            label_visibility="collapsed"
-        )
-        
-        # 選択された値に応じて処理
-        if selected_option == "❌ キャンセル（振替なし）":
+    with col2:
+        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.5rem;'>振替先（平日）</p>", unsafe_allow_html=True)
+        if transfer_from:
+            # 同じ週の平日を取得
+            weekday_options = get_weekdays_in_same_week(year, month, transfer_from)
+            
+            # 表示用のオプションリストを作成（キャンセルを含む）
+            display_options = ["❌ キャンセル（振替なし）"]
+            for day in weekday_options:
+                weekday_name = ['月','火','水','木','金','土','日'][calendar.weekday(year, month, day)]
+                display_options.append(f"{day}日 ({weekday_name})")
+            
+            # セレクトボックスで表示
+            selected_option = st.selectbox(
+                "振替先を選択",
+                options=display_options,
+                key="transfer_to_select",
+                label_visibility="collapsed"
+            )
+            
+            # 選択された値に応じて処理
+            if selected_option == "❌ キャンセル（振替なし）":
+                transfer_to = None
+                is_cancel = True
+            else:
+                # 日付部分を抽出（例: "13日 (火)" → 13）
+                day_str = selected_option.split("日")[0]
+                transfer_to = int(day_str)
+                is_cancel = False
+        else:
+            st.info("👆 まず振替元を選択してください")
             transfer_to = None
-            is_cancel = True
-        else:
-            # 日付部分を抽出（例: "13日 (火)" → 13）
-            day_str = selected_option.split("日")[0]
-            transfer_to = int(day_str)
             is_cancel = False
-    else:
-        st.info("👆 まず振替元を選択してください")
-        transfer_to = None
-        is_cancel = False
-
-# 時間設定（キャンセルでない場合のみ表示）
-if transfer_from and not is_cancel:
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.8rem;'>⏰ 時間設定</p>", unsafe_allow_html=True)
     
-    time_col1, time_col2, time_col3 = st.columns(3)
-    
-    with time_col1:
-        start_hour = st.selectbox(
-            "開始時",
-            options=list(range(9, 18)),
-            index=2,
-            format_func=lambda x: f"{x}時",
-            key="start_hour"
-        )
-
-    with time_col2:
-        start_min = st.selectbox(
-            "開始分",
-            options=list(range(0, 60, 5)),
-            index=4,
-            format_func=lambda x: f"{x:02d}分",
-            key="start_min"
-        )
-
-    with time_col3:
-        duration = st.selectbox(
-            "訪問時間",
-            options=[40, 60],
-            index=0,
-            format_func=lambda x: f"{x}分",
-            key="duration"
-        )
-
-    # 終了時刻計算
-    start_total_min = start_hour * 60 + start_min
-    end_total_min = start_total_min + duration
-    end_hour = end_total_min // 60
-    end_min = end_total_min % 60
-    
-    # 時間表示（超スタイリッシュ）
-    st.markdown(f"""
-    <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                padding: 1.5rem 2rem; 
-                border-radius: 16px; 
-                text-align: center;
-                margin: 1.5rem 0;
-                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-                border: 3px solid rgba(255,255,255,0.4);
-                position: relative;
-                overflow: hidden;'>
-        <div style='position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
-                    background: radial-gradient(circle at top right, rgba(255,255,255,0.1), transparent);'>
-        </div>
-        <p style='color: white; font-size: 2rem; font-weight: 900; margin: 0; 
-                  letter-spacing: 2px; position: relative; z-index: 1;'>
-            {start_hour}:{start_min:02d} ～ {end_hour}:{end_min:02d}
-        </p>
-        <p style='color: rgba(255,255,255,0.95); font-size: 1.1rem; margin: 0.5rem 0 0 0; 
-                  font-weight: 700; position: relative; z-index: 1;'>
-            📋 訪問時間: {duration}分
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # バリデーション
-    transfer_time = f"{start_hour}:{start_min:02d}-{end_hour}:{end_min:02d}"
-    time_valid = not (end_hour > 17 or (end_hour == 17 and end_min > 30))
-    
-    if not time_valid:
-        st.error("⚠️ 終了時刻が定時（17:30）を超えています")
-else:
-    # キャンセルの場合：時間設定不要
-    transfer_time = ""
-    time_valid = True
-    if transfer_from and is_cancel:
+    # 時間設定（キャンセルでない場合のみ表示）
+    if transfer_from and not is_cancel:
         st.markdown("<br>", unsafe_allow_html=True)
-        st.info("ℹ️ キャンセルの場合は時間設定は不要です")
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# ボタン
-col_btn1, col_btn2 = st.columns(2)
-
-with col_btn1:
-    button_label = "➕ 追加"
-    if st.button(button_label, use_container_width=True, type="primary"):
-        if transfer_from is None:
-            st.error("❌ 振替元（訪問日）を選択してください")
-        elif is_cancel:
-            # キャンセルの場合は即座に追加
-            if any(t[0] == transfer_from for t in st.session_state.transfers):
-                st.warning("⚠️ この日付は既に登録されています")
-            else:
-                st.session_state.transfers.append((transfer_from, None, ""))
-                st.success(f"✅ {transfer_from}日をキャンセルしました")
-                st.rerun()
-        elif transfer_to is None:
-            st.error("❌ 振替先を選択してください")
-        elif not time_valid:
-            st.error("❌ 終了時刻が定時を超えています")
-        else:
-            # 振替の追加
-            if any(t[0] == transfer_from for t in st.session_state.transfers):
-                st.warning("⚠️ この日付は既に登録されています")
-            else:
-                st.session_state.transfers.append((transfer_from, transfer_to, transfer_time))
-                st.success(f"✅ {transfer_from}日 → {transfer_to}日を追加しました")
-                st.rerun()
-
-with col_btn2:
-    if st.button("🗑️ 全てクリア", use_container_width=True):
-        st.session_state.transfers = []
-        st.rerun()
-
-# 登録された振替/キャンセル
-st.markdown("<br>", unsafe_allow_html=True)
-
-if st.session_state.transfers:
-    st.markdown(f"<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:1rem;'>📋 登録された内容</p>", unsafe_allow_html=True)
-    for i, (from_day, to_day, time) in enumerate(st.session_state.transfers, 1):
-        from_weekday = ['月','火','水','木','金','土','日'][calendar.weekday(year, month, from_day)]
+        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.8rem;'>⏰ 時間設定</p>", unsafe_allow_html=True)
         
-        col_info, col_del = st.columns([8.5, 1.5])
-        with col_info:
-            if to_day is not None:
-                # 振替あり
-                to_weekday = ['月','火','水','木','金','土','日'][calendar.weekday(year, month, to_day)]
-                st.markdown(f"""
-                <div style='background: white;
-                            padding: 1.2rem 1.5rem; 
-                            border-radius: 14px; 
-                            border-left: 6px solid;
-                            border-image: linear-gradient(180deg, #667eea 0%, #764ba2 100%) 1;
-                            margin-bottom: 0.8rem;
-                            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-                            transition: all 0.3s ease;'>
-                    <span style='font-size: 1.1rem; font-weight: 800; color: #2c3e50;'>
-                        {i}. {from_day}日({from_weekday}) <span style='color: #667eea; font-size: 1.3rem;'>→</span> {to_day}日({to_weekday})
-                    </span>
-                    <span style='color: #7f8c8d; margin-left: 1.5rem; font-weight: 600; font-size: 1rem;'>
-                        🕐 {time}
-                    </span>
-                </div>
-                """, unsafe_allow_html=True)
-            else:
-                # キャンセルのみ
-                st.markdown(f"""
-                <div style='background: white;
-                            padding: 1.2rem 1.5rem; 
-                            border-radius: 14px; 
-                            border-left: 6px solid #e74c3c;
-                            margin-bottom: 0.8rem;
-                            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-                            transition: all 0.3s ease;'>
-                    <span style='font-size: 1.1rem; font-weight: 800; color: #2c3e50;'>
-                        {i}. {from_day}日({from_weekday}) <span style='color: #e74c3c; font-weight: 900;'>❌ キャンセル</span>
-                    </span>
-                </div>
-                """, unsafe_allow_html=True)
-        with col_del:
+        time_col1, time_col2, time_col3 = st.columns(3)
+        
+        with time_col1:
+            start_hour = st.selectbox(
+                "開始時",
+                options=list(range(9, 18)),
+                index=2,
+                format_func=lambda x: f"{x}時",
+                key="start_hour"
+            )
+    
+        with time_col2:
+            start_min = st.selectbox(
+                "開始分",
+                options=list(range(0, 60, 5)),
+                index=4,
+                format_func=lambda x: f"{x:02d}分",
+                key="start_min"
+            )
+    
+        with time_col3:
+            duration = st.selectbox(
+                "訪問時間",
+                options=[40, 60],
+                index=0,
+                format_func=lambda x: f"{x}分",
+                key="duration"
+            )
+    
+        # 終了時刻計算
+        start_total_min = start_hour * 60 + start_min
+        end_total_min = start_total_min + duration
+        end_hour = end_total_min // 60
+        end_min = end_total_min % 60
+        
+        # 時間表示（超スタイリッシュ）
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    padding: 1.5rem 2rem; 
+                    border-radius: 16px; 
+                    text-align: center;
+                    margin: 1.5rem 0;
+                    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+                    border: 3px solid rgba(255,255,255,0.4);
+                    position: relative;
+                    overflow: hidden;'>
+            <div style='position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
+                        background: radial-gradient(circle at top right, rgba(255,255,255,0.1), transparent);'>
+            </div>
+            <p style='color: white; font-size: 2rem; font-weight: 900; margin: 0; 
+                      letter-spacing: 2px; position: relative; z-index: 1;'>
+                {start_hour}:{start_min:02d} ～ {end_hour}:{end_min:02d}
+            </p>
+            <p style='color: rgba(255,255,255,0.95); font-size: 1.1rem; margin: 0.5rem 0 0 0; 
+                      font-weight: 700; position: relative; z-index: 1;'>
+                📋 訪問時間: {duration}分
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # バリデーション
+        transfer_time = f"{start_hour}:{start_min:02d}-{end_hour}:{end_min:02d}"
+        time_valid = not (end_hour > 17 or (end_hour == 17 and end_min > 30))
+        
+        if not time_valid:
+            st.error("⚠️ 終了時刻が定時（17:30）を超えています")
+    else:
+        # キャンセルの場合：時間設定不要
+        transfer_time = ""
+        time_valid = True
+        if transfer_from and is_cancel:
             st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("🗑️", key=f"del_{i}", help="削除", use_container_width=True):
-                st.session_state.transfers.pop(i-1)
-                st.rerun()
-else:
-    st.markdown(f"<p style='color: #95a5a6; font-style: italic; text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 12px;'>登録なし</p>", unsafe_allow_html=True)
-
-# 通常モードのみここまで
+            st.info("ℹ️ キャンセルの場合は時間設定は不要です")
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # ボタン
+    col_btn1, col_btn2 = st.columns(2)
+    
+    with col_btn1:
+        button_label = "➕ 追加"
+        if st.button(button_label, use_container_width=True, type="primary"):
+            if transfer_from is None:
+                st.error("❌ 振替元（訪問日）を選択してください")
+            elif is_cancel:
+                # キャンセルの場合は即座に追加
+                if any(t[0] == transfer_from for t in st.session_state.transfers):
+                    st.warning("⚠️ この日付は既に登録されています")
+                else:
+                    st.session_state.transfers.append((transfer_from, None, ""))
+                    st.success(f"✅ {transfer_from}日をキャンセルしました")
+                    st.rerun()
+            elif transfer_to is None:
+                st.error("❌ 振替先を選択してください")
+            elif not time_valid:
+                st.error("❌ 終了時刻が定時を超えています")
+            else:
+                # 振替の追加
+                if any(t[0] == transfer_from for t in st.session_state.transfers):
+                    st.warning("⚠️ この日付は既に登録されています")
+                else:
+                    st.session_state.transfers.append((transfer_from, transfer_to, transfer_time))
+                    st.success(f"✅ {transfer_from}日 → {transfer_to}日を追加しました")
+                    st.rerun()
+    
+    with col_btn2:
+        if st.button("🗑️ 全てクリア", use_container_width=True):
+            st.session_state.transfers = []
+            st.rerun()
+    
+    # 登録された振替/キャンセル
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    if st.session_state.transfers:
+        st.markdown(f"<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:1rem;'>📋 登録された内容</p>", unsafe_allow_html=True)
+        for i, (from_day, to_day, time) in enumerate(st.session_state.transfers, 1):
+            from_weekday = ['月','火','水','木','金','土','日'][calendar.weekday(year, month, from_day)]
+            
+            col_info, col_del = st.columns([8.5, 1.5])
+            with col_info:
+                if to_day is not None:
+                    # 振替あり
+                    to_weekday = ['月','火','水','木','金','土','日'][calendar.weekday(year, month, to_day)]
+                    st.markdown(f"""
+                    <div style='background: white;
+                                padding: 1.2rem 1.5rem; 
+                                border-radius: 14px; 
+                                border-left: 6px solid;
+                                border-image: linear-gradient(180deg, #667eea 0%, #764ba2 100%) 1;
+                                margin-bottom: 0.8rem;
+                                box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+                                transition: all 0.3s ease;'>
+                        <span style='font-size: 1.1rem; font-weight: 800; color: #2c3e50;'>
+                            {i}. {from_day}日({from_weekday}) <span style='color: #667eea; font-size: 1.3rem;'>→</span> {to_day}日({to_weekday})
+                        </span>
+                        <span style='color: #7f8c8d; margin-left: 1.5rem; font-weight: 600; font-size: 1rem;'>
+                            🕐 {time}
+                        </span>
+                    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    # キャンセルのみ
+                    st.markdown(f"""
+                    <div style='background: white;
+                                padding: 1.2rem 1.5rem; 
+                                border-radius: 14px; 
+                                border-left: 6px solid #e74c3c;
+                                margin-bottom: 0.8rem;
+                                box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+                                transition: all 0.3s ease;'>
+                        <span style='font-size: 1.1rem; font-weight: 800; color: #2c3e50;'>
+                            {i}. {from_day}日({from_weekday}) <span style='color: #e74c3c; font-weight: 900;'>❌ キャンセル</span>
+                        </span>
+                    </div>
+                    """, unsafe_allow_html=True)
+            with col_del:
+                st.markdown("<br>", unsafe_allow_html=True)
+                if st.button("🗑️", key=f"del_{i}", help="削除", use_container_width=True):
+                    st.session_state.transfers.pop(i-1)
+                    st.rerun()
+    else:
+        st.markdown(f"<p style='color: #95a5a6; font-style: italic; text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 12px;'>登録なし</p>", unsafe_allow_html=True)
+    
+    # 通常モードのみここまで
 st.markdown("---")
 
 # PDF作成関数
