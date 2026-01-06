@@ -621,60 +621,19 @@ st.markdown("<p style='color: #7f8c8d; font-size: 0.85rem; margin: 0.5rem 0 1.5r
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# 振替機能の有効/無効選択
+# 説明カード
 st.markdown("""
-<div style='background: linear-gradient(145deg, #fff3e0 0%, #ffffff 100%);
-            padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-            margin: 1.5rem 0;
-            border: 1px solid rgba(255, 152, 0, 0.2);'>
-    <p style='color: #e65100; font-size: 0.95rem; font-weight: 600; margin: 0; text-align: center;'>
-        ⚠️ 振替機能を使用するかどうかを選択してください
+<div style='background: linear-gradient(145deg, #e8f5e9 0%, #ffffff 100%);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            margin: 2rem 0;
+            border: 1px solid rgba(76, 175, 80, 0.2);'>
+    <p style='color: #2e7d32; font-size: 0.95rem; font-weight: 600; margin: 0; text-align: center;'>
+        💡 振替先で「キャンセル」を選ぶと振替なしでお休みになります
     </p>
 </div>
 """, unsafe_allow_html=True)
-
-use_transfer = st.checkbox(
-    "🔄 振替機能を使用する（休んだ日を別の日に振り替える）",
-    value=True,
-    key="use_transfer",
-    help="チェックを外すと、キャンセルのみ（振替なし）になります"
-)
-
-if not use_transfer:
-    st.info("✅ キャンセルのみモード：訪問をキャンセルしたい日を指定できます（振替はありません）")
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-if use_transfer:
-    # 振替機能が有効な場合のみ表示
-    st.markdown("""
-    <div style='background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 100%);
-                padding: 2.5rem 2rem;
-                border-radius: 20px;
-                box-shadow: 0 8px 30px rgba(0,0,0,0.06);
-                margin: 2rem 0;
-                border: 1px solid rgba(102, 126, 234, 0.08);'>
-        <p style='color: #7f8c8d; font-size: 0.95rem; font-weight: 600; margin: 0 0 1.5rem 0; text-align: center;'>
-            💡 振替がない場合は、このセクションをスキップして「PDFを作成」ボタンへ
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-else:
-    # キャンセルのみモードの説明
-    st.markdown("""
-    <div style='background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 100%);
-                padding: 2.5rem 2rem;
-                border-radius: 20px;
-                box-shadow: 0 8px 30px rgba(0,0,0,0.06);
-                margin: 2rem 0;
-                border: 1px solid rgba(102, 126, 234, 0.08);'>
-        <p style='color: #7f8c8d; font-size: 0.95rem; font-weight: 600; margin: 0 0 1.5rem 0; text-align: center;'>
-            💡 キャンセルしたい日を選択してください（振替先の設定は不要です）
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
 
 # 関数定義
 def get_visit_days(year, month, weekday_name):
@@ -730,62 +689,60 @@ else:
     visit3_days = []
 
 # グリッドレイアウト
-if use_transfer:
-    # 振替機能が有効：振替元と振替先を選択
-    col1, col2 = st.columns([1, 1])
+col1, col2 = st.columns([1, 1])
 
-    with col1:
-        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.5rem;'>振替元（訪問日）</p>", unsafe_allow_html=True)
-        if transfer_options:
-            transfer_from = st.selectbox(
-                "振替元を選択",
-                options=transfer_options,
-                format_func=lambda x: f"{x}日",
-                key="transfer_from_select",
-                label_visibility="collapsed"
-            )
-        else:
-            st.warning("⚠️ 訪問日がありません")
-            transfer_from = None
-
-    with col2:
-        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.5rem;'>振替先（平日）</p>", unsafe_allow_html=True)
-        if transfer_from:
-            weekday_options = get_weekdays_in_same_week(year, month, transfer_from)
-            
-            if weekday_options:
-                transfer_to = st.selectbox(
-                    "振替先を選択",
-                    options=weekday_options,
-                    format_func=lambda x: f"{x}日 ({['月','火','水','木','金','土','日'][calendar.weekday(year, month, x)]})",
-                    key="transfer_to_select",
-                    label_visibility="collapsed"
-                )
-            else:
-                st.warning("⚠️ 振替可能な日がありません")
-                transfer_to = None
-        else:
-            st.info("👆 まず振替元を選択してください")
-            transfer_to = None
-else:
-    # キャンセルのみモード：キャンセルする日だけ選択
-    st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.5rem;'>❌ キャンセルする日</p>", unsafe_allow_html=True)
+with col1:
+    st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.5rem;'>振替元（訪問日）</p>", unsafe_allow_html=True)
     if transfer_options:
         transfer_from = st.selectbox(
-            "キャンセルする日を選択",
+            "振替元を選択",
             options=transfer_options,
             format_func=lambda x: f"{x}日",
-            key="cancel_date_select",
+            key="transfer_from_select",
             label_visibility="collapsed"
         )
-        transfer_to = None  # 振替先なし
     else:
         st.warning("⚠️ 訪問日がありません")
         transfer_from = None
-        transfer_to = None
 
-# 時間設定（振替機能が有効な場合のみ）
-if use_transfer:
+with col2:
+    st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.5rem;'>振替先（平日）</p>", unsafe_allow_html=True)
+    if transfer_from:
+        weekday_options = get_weekdays_in_same_week(year, month, transfer_from)
+        
+        # 「キャンセル」オプションを追加
+        cancel_option = -1  # キャンセルを示す特別な値
+        all_options = [cancel_option] + weekday_options
+        
+        def format_transfer_option(x):
+            if x == -1:
+                return "❌ キャンセル（振替なし）"
+            else:
+                return f"{x}日 ({['月','火','水','木','金','土','日'][calendar.weekday(year, month, x)]})"
+        
+        if all_options:
+            transfer_to_selected = st.selectbox(
+                "振替先を選択",
+                options=all_options,
+                format_func=format_transfer_option,
+                key="transfer_to_select",
+                label_visibility="collapsed"
+            )
+            
+            # キャンセルが選択された場合はNone
+            transfer_to = None if transfer_to_selected == -1 else transfer_to_selected
+            is_cancel = (transfer_to_selected == -1)
+        else:
+            st.warning("⚠️ 振替可能な日がありません")
+            transfer_to = None
+            is_cancel = False
+    else:
+        st.info("👆 まず振替元を選択してください")
+        transfer_to = None
+        is_cancel = False
+
+# 時間設定（キャンセルでない場合のみ表示）
+if transfer_from and transfer_to is not None:
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin-bottom:0.8rem;'>⏰ 時間設定</p>", unsafe_allow_html=True)
     
@@ -856,9 +813,11 @@ with time_col3:
     if not time_valid:
         st.error("⚠️ 終了時刻が定時（17:30）を超えています")
 else:
-    # キャンセルのみモード：時間設定不要
+    # キャンセルの場合：時間設定不要
     transfer_time = ""
     time_valid = True
+    if transfer_from and is_cancel:
+        st.info("ℹ️ キャンセルの場合は時間設定は不要です")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -866,28 +825,24 @@ st.markdown("<br>", unsafe_allow_html=True)
 col_btn1, col_btn2 = st.columns(2)
 
 with col_btn1:
-    button_label = "➕ 振替を追加" if use_transfer else "❌ キャンセルを追加"
+    button_label = "➕ 追加"
     if st.button(button_label, use_container_width=True, type="primary"):
         if transfer_from is None:
-            error_msg = "❌ 振替元を選択してください" if use_transfer else "❌ キャンセルする日を選択してください"
-            st.error(error_msg)
-        elif use_transfer and transfer_to is None:
+            st.error("❌ 振替元（訪問日）を選択してください")
+        elif transfer_to is None and not is_cancel:
             st.error("❌ 振替先を選択してください")
-        elif use_transfer and not time_valid:
+        elif transfer_to is not None and not time_valid:
             st.error("❌ 終了時刻が定時を超えています")
         else:
             if any(t[0] == transfer_from for t in st.session_state.transfers):
-                warning_msg = "⚠️ この日付の振替は既に登録されています" if use_transfer else "⚠️ この日付は既にキャンセル登録されています"
-                st.warning(warning_msg)
+                st.warning("⚠️ この日付は既に登録されています")
             else:
-                # 振替モードとキャンセルモードで異なる形式で保存
-                if use_transfer:
-                    st.session_state.transfers.append((transfer_from, transfer_to, transfer_time))
-                    st.success(f"✅ {transfer_from}日 → {transfer_to}日を追加しました")
-                else:
-                    # キャンセルのみの場合はtransfer_toをNone、transfer_timeを空文字で保存
-                    st.session_state.transfers.append((transfer_from, None, ""))
+                # 振替またはキャンセルを追加
+                st.session_state.transfers.append((transfer_from, transfer_to, transfer_time))
+                if is_cancel or transfer_to is None:
                     st.success(f"✅ {transfer_from}日をキャンセルしました")
+                else:
+                    st.success(f"✅ {transfer_from}日 → {transfer_to}日を追加しました")
                 st.rerun()
 
 with col_btn2:
@@ -899,15 +854,14 @@ with col_btn2:
 st.markdown("<br>", unsafe_allow_html=True)
 
 if st.session_state.transfers:
-    list_title = "📋 登録された振替" if use_transfer else "📋 キャンセル済みの日"
-    st.markdown(f"<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:1rem;'>{list_title}</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='font-weight:700; color:#2c3e50; font-size:1.1rem; margin-bottom:1rem;'>📋 登録された内容</p>", unsafe_allow_html=True)
     for i, (from_day, to_day, time) in enumerate(st.session_state.transfers, 1):
         from_weekday = ['月','火','水','木','金','土','日'][calendar.weekday(year, month, from_day)]
         
         col_info, col_del = st.columns([8.5, 1.5])
         with col_info:
-            if use_transfer and to_day is not None:
-                # 振替モード：振替元→振替先と時間を表示
+            if to_day is not None:
+                # 振替あり
                 to_weekday = ['月','火','水','木','金','土','日'][calendar.weekday(year, month, to_day)]
                 st.markdown(f"""
                 <div style='background: white;
@@ -927,7 +881,7 @@ if st.session_state.transfers:
                 </div>
                 """, unsafe_allow_html=True)
             else:
-                # キャンセルモード：キャンセル日のみ表示
+                # キャンセルのみ
                 st.markdown(f"""
                 <div style='background: white;
                             padding: 1.2rem 1.5rem; 
@@ -947,8 +901,7 @@ if st.session_state.transfers:
                 st.session_state.transfers.pop(i-1)
                 st.rerun()
 else:
-    empty_msg = "振替なし" if use_transfer else "キャンセルなし"
-    st.markdown(f"<p style='color: #95a5a6; font-style: italic; text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 12px;'>{empty_msg}</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color: #95a5a6; font-style: italic; text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 12px;'>登録なし</p>", unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -1168,9 +1121,8 @@ with st.expander("💡 使い方ガイド"):
     2. **スタッフ名を登録** → 最大3名まで登録可能
     3. **訪問回数を選択** → 週1回、週2回、週3回から選択
     4. **定期訪問日を設定** → 曜日・時間・担当スタッフを選択
-    5. **振替機能を選択** → 使用する/しないを選択
-    6. **振替またはキャンセルを追加** → 必要に応じて
-    7. **PDFを作成** → ダウンロード
+    5. **キャンセル・振替を追加** → 必要に応じて
+    6. **PDFを作成** → ダウンロード
     
     ### 👥 スタッフ設定
     - **スタッフ登録**: 最大3名まで登録可能
@@ -1186,24 +1138,22 @@ with st.expander("💡 使い方ガイド"):
     - デフォルト: 月曜日 11:20-12:00 / 水曜日 11:00-11:40
     - 訪問時間は40分/60分から選択
     
-    ### 🔄 振替/キャンセル設定
-    **振替機能を使用する場合:**
-    - 休んだ日を別の日に振り替えられます
-    - 振替元（訪問日）と振替先（同じ週の平日）を選択
-    - 振替先の時間も設定できます
+    ### 🔄 キャンセル・振替設定
+    **振替先で選択:**
+    - **❌ キャンセル（振替なし）**: その日は休みになる
+    - **平日を選択**: 別の日に振り替える（時間も設定）
     
-    **振替機能を使用しない場合（キャンセルのみ）:**
-    - 訪問をキャンセルするだけで振替なし
-    - キャンセルする日を選択するだけでOK
-    - 時間設定は不要です
+    **使い分け:**
+    - 単純に休みたい → 振替先で「キャンセル」を選択
+    - 別の日に移したい → 振替先で平日を選択 + 時間設定
     
     ### 💡 ポイント
     - 週1回～週3回まで柔軟に対応
-    - 振替あり/なしを選択可能
+    - カレンダー表示で日付を確認しながら設定
+    - キャンセルと振替を同時に使える
     - 担当スタッフがカレンダーに明記される
     - 終了時刻は自動計算されるので入力ミスなし
     - 定時（9:00-17:30）を超えるとエラー表示
-    - 同じ日の重複登録を自動チェック
     """)
 
 # フッター
@@ -1212,7 +1162,7 @@ st.markdown("""
             background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 100%);
             border-radius: 16px;'>
     <p style='color: #7f8c8d; font-size: 0.95rem; font-weight: 600; margin: 0;'>
-        💡 週1回～週3回の訪問に対応 | スタッフ名をカレンダーに表示 | 振替あり/なし選択可能
+        💡 週1回～週3回の訪問に対応 | スタッフ名表示 | キャンセル・振替を自由に設定
     </p>
     <p style='color: #95a5a6; font-size: 0.85rem; margin: 0.8rem 0 0 0;'>
         Created with ❤️ by Claude
