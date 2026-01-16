@@ -747,11 +747,12 @@ if mode == "特指示モード":
                     del st.session_state.toku_selected_days[day]
     
     st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
     
     # 選択された日付の数を表示
     selected_count = len(st.session_state.toku_selected_days)
     if selected_count > 0:
+        st.markdown("<br>", unsafe_allow_html=True)
+        
         st.markdown(f"""
         <div style='background: linear-gradient(135deg, #ef5350 0%, #e57373 100%); 
                     padding: 0.8rem 1.5rem; 
@@ -842,7 +843,13 @@ if mode == "特指示モード":
             """, unsafe_allow_html=True)
     
     else:
-        st.info("👆 訪問日を選択してください")
+        st.markdown("""
+        <div style='text-align: center; padding: 2rem 1rem; margin: 1rem 0;'>
+            <p style='color: #95a5a6; font-size: 1.1rem; font-weight: 600;'>
+                👆 訪問日を選択してください
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
     
     # 通常モード用のダミー値を設定
     visit_count = 0
