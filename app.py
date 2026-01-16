@@ -925,8 +925,6 @@ else:
     visit2_days = []
     visit3_days = []
 
-st.markdown("---")
-
 # キャンセル・振替設定セクション（通常モードのみ）
 if mode == "通常モード":
     st.header("📅 キャンセル・振替設定")
@@ -1224,7 +1222,7 @@ if mode == "通常モード":
         st.markdown(f"<p style='color: #95a5a6; font-style: italic; text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 12px;'>登録なし</p>", unsafe_allow_html=True)
     
     # 通常モードのみここまで
-st.markdown("---")
+    st.markdown("---")
 
 # PDF作成関数
 def create_pdf(year, month, transfers_list, visit1_config, visit2_config=None, visit3_config=None):
