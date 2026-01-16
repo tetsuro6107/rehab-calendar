@@ -765,16 +765,14 @@ if mode == "特指示モード":
         </div>
         """, unsafe_allow_html=True)
         
-        st.markdown("<br>", unsafe_allow_html=True)
-        
         # 各訪問日の時間・スタッフ設定
-        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.15rem; margin-bottom:1rem;'>⏰ 各訪問日の設定</p>", unsafe_allow_html=True)
+        st.markdown("<p style='font-weight:700; color:#2c3e50; font-size:1.15rem; margin:1.5rem 0 1rem 0;'>⏰ 各訪問日の設定</p>", unsafe_allow_html=True)
         
         for day in sorted(st.session_state.toku_selected_days.keys()):
             date_obj = datetime.date(year, month, day)
             weekday_name = weekday_names[date_obj.weekday()]
             
-            st.markdown(f"<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin:1.5rem 0 0.5rem 0;'>📌 {month}月{day}日 ({weekday_name})</p>", unsafe_allow_html=True)
+            st.markdown(f"<p style='font-weight:700; color:#2c3e50; font-size:1.05rem; margin:1rem 0 0.5rem 0;'>📌 {month}月{day}日 ({weekday_name})</p>", unsafe_allow_html=True)
             
             col_time, col_staff = st.columns([2, 1])
             
@@ -835,7 +833,7 @@ if mode == "特指示モード":
             <div style='background: linear-gradient(135deg, #ef5350 0%, #e57373 100%); 
                         padding: 0.6rem 1.2rem; 
                         border-radius: 10px; 
-                        margin: 0.5rem 0 1rem 0;'>
+                        margin: 0.5rem 0 0.5rem 0;'>
                 <p style='color: white; font-size: 0.95rem; font-weight: 600; margin: 0;'>
                     🕐 {time_str} | 👤 {st.session_state.toku_selected_days[day]['staff']}
                 </p>
@@ -844,8 +842,8 @@ if mode == "特指示モード":
     
     else:
         st.markdown("""
-        <div style='text-align: center; padding: 2rem 1rem; margin: 1rem 0;'>
-            <p style='color: #95a5a6; font-size: 1.1rem; font-weight: 600;'>
+        <div style='text-align: center; padding: 1rem 1.5rem; margin: 1rem 0 0.5rem 0;'>
+            <p style='color: #95a5a6; font-size: 1rem; font-weight: 600; margin: 0;'>
                 👆 訪問日を選択してください
             </p>
         </div>
@@ -1475,7 +1473,7 @@ def create_toku_pdf(year, month, start_day, end_day, selected_days_data):
     return pdf_buffer, visit_days
 
 # PDF作成ボタン
-st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 if st.button("📥 PDFを作成", use_container_width=True, type="primary"):
     with st.spinner("📄 PDF作成中..."):
         if mode == "通常モード":
