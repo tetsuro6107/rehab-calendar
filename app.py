@@ -842,8 +842,13 @@ if mode == "特指示モード":
     
     else:
         st.markdown("""
-        <div style='text-align: center; padding: 1rem 1.5rem; margin: 1rem 0 0.5rem 0;'>
-            <p style='color: #95a5a6; font-size: 1rem; font-weight: 600; margin: 0;'>
+        <div style='background: linear-gradient(145deg, #e3f2fd 0%, #ffffff 100%);
+                    padding: 1rem 1.5rem;
+                    border-radius: 16px;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+                    margin: 1rem 0 0.5rem 0;
+                    border: 1px solid rgba(33, 150, 243, 0.2);'>
+            <p style='color: #1565c0; font-size: 0.95rem; font-weight: 600; margin: 0; text-align: center;'>
                 👆 訪問日を選択してください
             </p>
         </div>
