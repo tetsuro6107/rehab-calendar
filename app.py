@@ -846,7 +846,7 @@ if mode == "特指示モード":
                     padding: 1rem 1.5rem;
                     border-radius: 16px;
                     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-                    margin: 1rem 0 0.5rem 0;
+                    margin: 1rem 0 0 0;
                     border: 1px solid rgba(33, 150, 243, 0.2);'>
             <p style='color: #1565c0; font-size: 0.95rem; font-weight: 600; margin: 0; text-align: center;'>
                 👆 訪問日を選択してください
@@ -868,8 +868,6 @@ if mode == "特指示モード":
     visit3_time = None
     visit3_days = []
     visit3_staff = None
-
-st.markdown("---")
 
 # 関数定義
 def get_visit_days(year, month, weekday_name):
@@ -1478,7 +1476,6 @@ def create_toku_pdf(year, month, start_day, end_day, selected_days_data):
     return pdf_buffer, visit_days
 
 # PDF作成ボタン
-st.markdown("<br>", unsafe_allow_html=True)
 if st.button("📥 PDFを作成", use_container_width=True, type="primary"):
     with st.spinner("📄 PDF作成中..."):
         if mode == "通常モード":
