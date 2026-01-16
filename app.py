@@ -846,7 +846,7 @@ if mode == "特指示モード":
                     padding: 1rem 1.5rem;
                     border-radius: 16px;
                     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-                    margin: 1rem 0 0 0;
+                    margin: 1rem 0 1.5rem 0;
                     border: 1px solid rgba(33, 150, 243, 0.2);'>
             <p style='color: #1565c0; font-size: 0.95rem; font-weight: 600; margin: 0; text-align: center;'>
                 👆 訪問日を選択してください
