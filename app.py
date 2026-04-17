@@ -1394,7 +1394,7 @@ def create_toku_pdf(year, month, start_day, end_day, selected_days_data):
     with PdfPages(pdf_buffer) as pdf:
         fig, ax = plt.subplots(figsize=(11.7, 8.3))
         ax.set_xlim(0, 7)
-        ax.set_ylim(0, len(cal) + 3.5)
+        ax.set_ylim(0, len(cal) + 3.0)
         ax.axis('off')
         
         # タイトル
