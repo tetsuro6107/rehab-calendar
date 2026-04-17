@@ -1409,25 +1409,6 @@ def create_toku_pdf(year, month, start_day, end_day, selected_days_data):
         ax.text(0.4, len(cal) + 1.95, f"{month}月{start_day}日 〜 {month}月{end_day}日（{days_count}日間）", 
                ha='left', va='center', fontsize=11, color='red')
         
-        # 訪問内容の表示
-        y_visit_info = len(cal) + 1.65
-        ax.text(0.2, y_visit_info, "【訪問内容】", ha='left', va='center',
-               fontsize=12, fontweight='bold', color='red')
-        
-        y_visit_info -= 0.3
-        
-        import datetime
-        weekday_names = ['月', '火', '水', '木', '金', '土', '日']
-        
-        for day in visit_days:
-            date_obj = datetime.date(year, month, day)
-            weekday_name = weekday_names[date_obj.weekday()]
-            info = selected_days_data[day]
-            
-            ax.text(0.4, y_visit_info, f"・{month}/{day}({weekday_name})：{info['time']}（{info['staff']}）", 
-                   ha='left', va='center', fontsize=11, color='red')
-            y_visit_info -= 0.25
-        
         # 曜日ヘッダー
         weekdays = ['日', '月', '火', '水', '木', '金', '土']
         for i, day in enumerate(weekdays):
