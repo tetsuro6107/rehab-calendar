@@ -1404,38 +1404,71 @@ def create_toku_pdf(year, month, start_day, end_day, selected_days_data):
         ax.text(3.5, len(cal) + 2.4, title, ha='center', va='center', 
                 fontsize=22, fontweight='bold', color='black')
         
-        # 特指示期間の表示（タイトルの下）
+        # 特指示期間の表示
         days_count = end_day - start_day + 1
         ax.text(0.2, len(cal) + 1.85, "【特別訪問看護指示期間】", ha='left', va='center',
                fontsize=12, fontweight='bold', color='black')
         ax.text(0.4, len(cal) + 1.5, f"{month}月{start_day}日 〜 {month}月{end_day}日（{days_count}日間）", 
                ha='left', va='center', fontsize=11, color='black')
         
-        # 曜日ヘッダー（期間テキストと分離）
+        # 曜日ヘッダー
         weekdays = ['日', '月', '火', '水', '木', '金', '土']
         for i, day in enumerate(weekdays):
             color = 'red' if i == 0 else 'blue' if i == 6 else 'black'
             ax.text(i + 0.5, len(cal) + 0.6, day, ha='center', va='center',
                    fontsize=14, fontweight='bold', color=color)
         
-        # カレンダーグリッド（y座標を元の位置に戻す）
+        # カレンダーグリッド
         for week_num, week in enumerate(cal):
             y = len(cal) - week_num
             
             for day_num, day in enumerate(week):
                 x = day_num
                 
-                rect = plt.Rectangle((x, y-1), 1, 1, fill=False, 
-                                    edgecolor='black', linewidth=1.2)
-                ax.add_patch(rect)
+                if day == 0:
+                    # 日付なしセル → グレー
+                    rect = plt.Rectangle((x, y-1), 1, 1,
+                                        facecolor='#EEEEEE', edgecolor='black', linewidth=1.2)
+                    ax.add_patch(rect)
                 
-                if day != 0:
-                    text_color = 'red' if day_num == 0 else 'blue' if day_num == 6 else 'black'
+                else:
+                    is_in_period = start_day <= day <= end_day
+                    is_visit_day = day in selected_days_data
+                    
+                    if is_visit_day:
+                        # 訪問日 → 薄いイエロー
+                        facecolor = '#FFF9C4'
+                        linewidth = 2.0
+                        edgecolor = '#F9A825'
+                    elif is_in_period:
+                        # 期間内・訪問なし → 白
+                        facecolor = '#FFFFFF'
+                        linewidth = 1.2
+                        edgecolor = 'black'
+                    else:
+                        # 期間外 → グレー
+                        facecolor = '#EEEEEE'
+                        linewidth = 1.2
+                        edgecolor = 'black'
+                    
+                    rect = plt.Rectangle((x, y-1), 1, 1,
+                                        facecolor=facecolor,
+                                        edgecolor=edgecolor,
+                                        linewidth=linewidth)
+                    ax.add_patch(rect)
+                    
+                    # 日付テキストの色
+                    if not is_in_period:
+                        # 期間外は日付も薄く
+                        text_color = '#AAAAAA'
+                    else:
+                        text_color = 'red' if day_num == 0 else 'blue' if day_num == 6 else 'black'
                     
                     ax.text(x + 0.05, y - 0.1, str(day), ha='left', va='top',
                            fontsize=13, fontweight='bold', color=text_color)
                     
-                    if day in selected_days_data:
+                    # 訪問情報
+                    if is_visit_day:
                         info = selected_days_data[day]
                         visit_text = f"{info['time']}\n{info['staff']}"
                         staff_color = staff_colors.get(info['staff'], '#1565C0')
