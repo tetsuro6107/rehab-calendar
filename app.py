@@ -1382,7 +1382,7 @@ def create_toku_pdf(year, month, start_day, end_day, selected_days_data):
     
     # スタッフカラーマップを作成
     staff_colors = {}
-    color_palette = ['#1565C0', '#2E7D32', '#B71C1C']  # ネイビー、フォレストグリーン、バーガンディ
+    color_palette = ['#1565C0', '#2E7D32', '#B71C1C']
     unique_staffs = []
     for day in sorted(selected_days_data.keys()):
         staff = selected_days_data[day]['staff']
@@ -1396,49 +1396,45 @@ def create_toku_pdf(year, month, start_day, end_day, selected_days_data):
     with PdfPages(pdf_buffer) as pdf:
         fig, ax = plt.subplots(figsize=(11.7, 8.3))
         ax.set_xlim(0, 7)
-        ax.set_ylim(-1, len(cal) + 2.5)
+        ax.set_ylim(-1, len(cal) + 2.8)
         ax.axis('off')
         
         # タイトル
         title = f"{year}年{month}月 特別訪問看護指示書 訪問予定表"
-        ax.text(3.5, len(cal) + 2.2, title, ha='center', va='center', 
+        ax.text(3.5, len(cal) + 2.4, title, ha='center', va='center', 
                 fontsize=22, fontweight='bold', color='black')
         
-        # 特指示期間の表示
+        # 特指示期間の表示（タイトルの下）
         days_count = end_day - start_day + 1
-        ax.text(0.2, len(cal) + 1.7, f"【特別訪問看護指示期間】", ha='left', va='center',
+        ax.text(0.2, len(cal) + 1.85, "【特別訪問看護指示期間】", ha='left', va='center',
                fontsize=12, fontweight='bold', color='black')
-        ax.text(0.4, len(cal) + 1.4, f"{month}月{start_day}日 〜 {month}月{end_day}日（{days_count}日間）", 
+        ax.text(0.4, len(cal) + 1.5, f"{month}月{start_day}日 〜 {month}月{end_day}日（{days_count}日間）", 
                ha='left', va='center', fontsize=11, color='black')
         
-        # 曜日ヘッダー
+        # 曜日ヘッダー（期間テキストと分離）
         weekdays = ['日', '月', '火', '水', '木', '金', '土']
         for i, day in enumerate(weekdays):
             color = 'red' if i == 0 else 'blue' if i == 6 else 'black'
-            ax.text(i + 0.5, len(cal) + 1.4, day, ha='center', va='center',
+            ax.text(i + 0.5, len(cal) + 0.6, day, ha='center', va='center',
                    fontsize=14, fontweight='bold', color=color)
         
-        # カレンダーグリッド
+        # カレンダーグリッド（y座標を元の位置に戻す）
         for week_num, week in enumerate(cal):
-            y = len(cal) - week_num + 1
+            y = len(cal) - week_num
             
             for day_num, day in enumerate(week):
                 x = day_num
                 
-                # セルの枠線
                 rect = plt.Rectangle((x, y-1), 1, 1, fill=False, 
                                     edgecolor='black', linewidth=1.2)
                 ax.add_patch(rect)
                 
                 if day != 0:
-                    # 日付の色
                     text_color = 'red' if day_num == 0 else 'blue' if day_num == 6 else 'black'
                     
-                    # 日付を表示（左上）
                     ax.text(x + 0.05, y - 0.1, str(day), ha='left', va='top',
                            fontsize=13, fontweight='bold', color=text_color)
                     
-                    # 特指示期間内の訪問日
                     if day in selected_days_data:
                         info = selected_days_data[day]
                         visit_text = f"{info['time']}\n{info['staff']}"
@@ -1447,9 +1443,9 @@ def create_toku_pdf(year, month, start_day, end_day, selected_days_data):
                                fontsize=12, fontweight='bold', color=staff_color)
         
         # フッター
-        ax.text(0.2, -0.5, "※ 特別訪問看護指示書に基づく訪問です。", 
+        ax.text(0.2, -0.4, "※ 特別訪問看護指示書に基づく訪問です。", 
                ha='left', va='center', fontsize=10, color='black', fontweight='bold')
-        ax.text(0.2, -0.75, "※ 急な変更が生じた場合は、事前にご連絡させていただきます。", 
+        ax.text(0.2, -0.7, "※ 急な変更が生じた場合は、事前にご連絡させていただきます。", 
                ha='left', va='center', fontsize=10)
         
         plt.tight_layout()
