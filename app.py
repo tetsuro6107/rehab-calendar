@@ -1394,7 +1394,7 @@ def create_toku_pdf(year, month, start_day, end_day, selected_days_data):
     with PdfPages(pdf_buffer) as pdf:
         fig, ax = plt.subplots(figsize=(11.7, 8.3))
         ax.set_xlim(0, 7)
-        ax.set_ylim(0, len(cal) + 2.0)
+        ax.set_ylim(-1, len(cal) + 2.5)
         ax.axis('off')
         
         # タイトル
@@ -1413,12 +1413,12 @@ def create_toku_pdf(year, month, start_day, end_day, selected_days_data):
         weekdays = ['日', '月', '火', '水', '木', '金', '土']
         for i, day in enumerate(weekdays):
             color = 'red' if i == 0 else 'blue' if i == 6 else 'black'
-            ax.text(i + 0.5, len(cal) + 0.3, day, ha='center', va='center',
+            ax.text(i + 0.5, len(cal) + 1.4, day, ha='center', va='center',
                    fontsize=14, fontweight='bold', color=color)
         
         # カレンダーグリッド
         for week_num, week in enumerate(cal):
-            y = len(cal) - week_num
+            y = len(cal) - week_num + 1
             
             for day_num, day in enumerate(week):
                 x = day_num
