@@ -1375,19 +1375,21 @@ def create_pdf(year, month, transfers_list, visit1_config, visit2_config=None, v
 
 # 特指示モード用PDF作成関数
 def create_toku_pdf(year, month, start_day, end_day, selected_days_data):
-    """
-    特別訪問看護指示書用のPDF作成
-    selected_days_data = {
-        10: {'time': '11:00-11:40', 'staff': '樫下'},
-        11: {'time': '14:00-14:40', 'staff': '田中'},
-        ...
-    }
-    """
-    calendar.setfirstweekday(6)  # 日曜始まり
+    calendar.setfirstweekday(6)
     cal = calendar.monthcalendar(year, month)
     
-    # 訪問日のリスト
     visit_days = sorted(selected_days_data.keys())
+    
+    # スタッフカラーマップを作成
+    staff_colors = {}
+    color_palette = ['#1565C0', '#2E7D32', '#B71C1C']  # ネイビー、フォレストグリーン、バーガンディ
+    unique_staffs = []
+    for day in sorted(selected_days_data.keys()):
+        staff = selected_days_data[day]['staff']
+        if staff not in unique_staffs:
+            unique_staffs.append(staff)
+    for i, staff in enumerate(unique_staffs):
+        staff_colors[staff] = color_palette[i % len(color_palette)]
     
     pdf_buffer = io.BytesIO()
     
@@ -1399,15 +1401,15 @@ def create_toku_pdf(year, month, start_day, end_day, selected_days_data):
         
         # タイトル
         title = f"{year}年{month}月 特別訪問看護指示書 訪問予定表"
-        ax.text(3.5, len(cal) + 3, title, ha='center', va='center', 
-                fontsize=22, fontweight='bold', color='red')
+        ax.text(3.5, len(cal) + 2.2, title, ha='center', va='center', 
+                fontsize=22, fontweight='bold', color='black')
         
         # 特指示期間の表示
         days_count = end_day - start_day + 1
-        ax.text(0.2, len(cal) + 2.3, f"【特別訪問看護指示期間】", ha='left', va='center',
-               fontsize=12, fontweight='bold', color='red')
-        ax.text(0.4, len(cal) + 1.95, f"{month}月{start_day}日 〜 {month}月{end_day}日（{days_count}日間）", 
-               ha='left', va='center', fontsize=11, color='red')
+        ax.text(0.2, len(cal) + 1.7, f"【特別訪問看護指示期間】", ha='left', va='center',
+               fontsize=12, fontweight='bold', color='black')
+        ax.text(0.4, len(cal) + 1.4, f"{month}月{start_day}日 〜 {month}月{end_day}日（{days_count}日間）", 
+               ha='left', va='center', fontsize=11, color='black')
         
         # 曜日ヘッダー
         weekdays = ['日', '月', '火', '水', '木', '金', '土']
@@ -1440,12 +1442,13 @@ def create_toku_pdf(year, month, start_day, end_day, selected_days_data):
                     if day in selected_days_data:
                         info = selected_days_data[day]
                         visit_text = f"{info['time']}\n{info['staff']}"
+                        staff_color = staff_colors.get(info['staff'], '#1565C0')
                         ax.text(x + 0.5, y - 0.55, visit_text, ha='center', va='center',
-                               fontsize=12, fontweight='bold', color='red')
+                               fontsize=12, fontweight='bold', color=staff_color)
         
         # フッター
         ax.text(0.2, -0.5, "※ 特別訪問看護指示書に基づく訪問です。", 
-               ha='left', va='center', fontsize=10, color='red', fontweight='bold')
+               ha='left', va='center', fontsize=10, color='black', fontweight='bold')
         ax.text(0.2, -0.75, "※ 急な変更が生じた場合は、事前にご連絡させていただきます。", 
                ha='left', va='center', fontsize=10)
         
@@ -1455,7 +1458,7 @@ def create_toku_pdf(year, month, start_day, end_day, selected_days_data):
     
     pdf_buffer.seek(0)
     return pdf_buffer, visit_days
-
+    
 # PDF作成ボタン
 if st.button("📥 PDFを作成", use_container_width=True, type="primary"):
     with st.spinner("📄 PDF作成中..."):
